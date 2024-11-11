@@ -118,7 +118,11 @@ export default function AuthView() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">Confirmar contraseña</Label>
-                    <Input id="confirm-password" required type="password" />
+                    <Input
+                      id="confirm-password"
+                      required
+                      type={showPassword ? "text" : "password"}
+                    />
                   </div>
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
