@@ -1,5 +1,5 @@
-import AuthView from "./auth/page";
+import Search from "./search/page";
 
 export default function Page() {
-  return <AuthView />;
+  return <Search />;
 }
