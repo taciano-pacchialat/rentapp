@@ -1,5 +1,5 @@
-import Search from "./search/page";
+import Agregar from "./agregarDepto/page";
 
 export default function Page() {
-  return <Search />;
+  return <Agregar />;
 }
