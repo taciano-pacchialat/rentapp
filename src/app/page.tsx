@@ -1,5 +1,5 @@
-import TermsAndConditions from "./terminos-y-condiciones/page";
+import AuthView from "./auth/page";
 
 export default function Page() {
-  return <TermsAndConditions />;
+  return <AuthView />;
 }
