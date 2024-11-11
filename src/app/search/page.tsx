@@ -40,46 +40,6 @@ const apartments = [
     rooms: 1,
   },
   // Add more apartments as needed
-  {
-    id: 2,
-    name: "Cozy Studio",
-    price: 800,
-    owner: "Jane Doe",
-    description: "Comfortable studio perfect for singles or couples",
-    hasParking: false,
-    hasPets: false,
-    rooms: 1,
-  },
-  {
-    id: 2,
-    name: "Cozy Studio",
-    price: 800,
-    owner: "Jane Doe",
-    description: "Comfortable studio perfect for singles or couples",
-    hasParking: false,
-    hasPets: false,
-    rooms: 1,
-  },
-  {
-    id: 2,
-    name: "Cozy Studio",
-    price: 800,
-    owner: "Jane Doe",
-    description: "Comfortable studio perfect for singles or couples",
-    hasParking: false,
-    hasPets: false,
-    rooms: 1,
-  },
-  {
-    id: 2,
-    name: "Cozy Studio",
-    price: 800,
-    owner: "Jane Doe",
-    description: "Comfortable studio perfect for singles or couples",
-    hasParking: false,
-    hasPets: false,
-    rooms: 1,
-  },
 ]
 
 export default function Component() {
@@ -270,23 +230,24 @@ export default function Component() {
         </div>
       </nav>
       <main className="w-full max-w-7xl py-8 px-4 md:px-6">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredApartments.map((apartment) => (
-            <Link key={apartment.id} href={`/apartment/${apartment.id}`}>
-              <Card className="overflow-hidden hover:shadow-lg transition-shadow w-full h-[400px] flex flex-col">
-                <Image
-                  src="/placeholder.svg"
-                  alt={apartment.name}
-                  width={400}
-                  height={200}
-                  className="h-48 w-full object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
+            <Link key={apartment.id} href={`/apartment/${apartment.id}`} className="block w-full">
+              <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
+                <div className="relative w-full pt-[56.25%]">
+                  <Image
+                    src="/placeholder.svg"
+                    alt={apartment.name}
+                    fill
+                    className="object-cover absolute top-0 left-0 w-full h-full"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">Owner: {apartment.owner}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow overflow-hidden">
+                <CardContent className="flex-grow">
                   <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
                 </CardContent>
                 <CardFooter className="mt-auto">
