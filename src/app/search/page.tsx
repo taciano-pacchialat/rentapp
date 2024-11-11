@@ -1,10 +1,17 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -12,10 +19,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { SlidersHorizontal, Search } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+} from "@/components/ui/sheet";
+import { SlidersHorizontal, Search } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 // Mock data for demonstration
 const apartments = [
@@ -40,11 +47,11 @@ const apartments = [
     rooms: 1,
   },
   // Add more apartments as needed
-]
+];
 
 export default function Component() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [filters, setFilters] = useState({
     hasParking: false,
     hasPets: false,
@@ -53,23 +60,23 @@ export default function Component() {
     rooms3: false,
     priceLow: false,
     priceHigh: false,
-  })
+  });
 
-  const filteredApartments = apartments.filter(apt => {
+  const filteredApartments = apartments.filter((apt) => {
     if (searchQuery && !apt.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false
+      return false;
     }
-    
-    if (filters.hasParking && !apt.hasParking) return false
-    if (filters.hasPets && !apt.hasPets) return false
-    if (filters.rooms1 && apt.rooms !== 1) return false
-    if (filters.rooms2 && apt.rooms !== 2) return false
-    if (filters.rooms3 && apt.rooms !== 3) return false
-    if (filters.priceLow && apt.price > 1000) return false
-    if (filters.priceHigh && apt.price < 1000) return false
-    
-    return true
-  })
+
+    if (filters.hasParking && !apt.hasParking) return false;
+    if (filters.hasPets && !apt.hasPets) return false;
+    if (filters.rooms1 && apt.rooms !== 1) return false;
+    if (filters.rooms2 && apt.rooms !== 2) return false;
+    if (filters.rooms3 && apt.rooms !== 3) return false;
+    if (filters.priceLow && apt.price > 1000) return false;
+    if (filters.priceHigh && apt.price < 1000) return false;
+
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -134,11 +141,14 @@ export default function Component() {
                       <Checkbox
                         id="parking"
                         checked={filters.hasParking}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, hasParking: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, hasParking: checked === true }))
                         }
                       />
-                      <label htmlFor="parking" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="parking"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         Parking Available
                       </label>
                     </div>
@@ -146,11 +156,14 @@ export default function Component() {
                       <Checkbox
                         id="pets"
                         checked={filters.hasPets}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, hasPets: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, hasPets: checked === true }))
                         }
                       />
-                      <label htmlFor="pets" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="pets"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         Pet Friendly
                       </label>
                     </div>
@@ -161,11 +174,14 @@ export default function Component() {
                       <Checkbox
                         id="1room"
                         checked={filters.rooms1}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, rooms1: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, rooms1: checked === true }))
                         }
                       />
-                      <label htmlFor="1room" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="1room"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         1 Room
                       </label>
                     </div>
@@ -173,11 +189,14 @@ export default function Component() {
                       <Checkbox
                         id="2rooms"
                         checked={filters.rooms2}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, rooms2: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, rooms2: checked === true }))
                         }
                       />
-                      <label htmlFor="2rooms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="2rooms"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         2 Rooms
                       </label>
                     </div>
@@ -185,11 +204,14 @@ export default function Component() {
                       <Checkbox
                         id="3rooms"
                         checked={filters.rooms3}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, rooms3: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, rooms3: checked === true }))
                         }
                       />
-                      <label htmlFor="3rooms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="3rooms"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         3+ Rooms
                       </label>
                     </div>
@@ -200,11 +222,14 @@ export default function Component() {
                       <Checkbox
                         id="priceLow"
                         checked={filters.priceLow}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, priceLow: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, priceLow: checked === true }))
                         }
                       />
-                      <label htmlFor="priceLow" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="priceLow"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         Under $1000
                       </label>
                     </div>
@@ -212,11 +237,14 @@ export default function Component() {
                       <Checkbox
                         id="priceHigh"
                         checked={filters.priceHigh}
-                        onCheckedChange={(checked) => 
-                          setFilters(prev => ({ ...prev, priceHigh: checked === true }))
+                        onCheckedChange={(checked) =>
+                          setFilters((prev) => ({ ...prev, priceHigh: checked === true }))
                         }
                       />
-                      <label htmlFor="priceHigh" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor="priceHigh"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         $1000 and above
                       </label>
                     </div>
@@ -256,5 +284,5 @@ export default function Component() {
         </div>
       </main>
     </div>
-  )
+  );
 }
