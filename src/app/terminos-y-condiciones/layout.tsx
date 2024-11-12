@@ -1,10 +1,4 @@
-import type { Metadata } from "next";
 import "../globals.css";
-
-export const metadata: Metadata = {
-  title: "Terminos y condiciones",
-  description: "Vista de terminos y condiciones de la app",
-};
 
 export default function TermsAndConditionsLayout({
   children,
