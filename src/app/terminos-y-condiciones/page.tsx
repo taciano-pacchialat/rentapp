@@ -11,7 +11,7 @@ export default function TermsAndConditions() {
           <ArrowLeft />
         </Button>
       </Link>
-      <Card className="w-full max-w-2xl">
+      <Card className="w-full border-2 max-w-2xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center text-primary underline">
             Términos y Condiciones
