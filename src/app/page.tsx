@@ -1,5 +1,5 @@
-import Agregar from "./agregarDepto/page";
+import AuthView from "./auth/page";
 
 export default function Page() {
-  return <Agregar />;
+  return <AuthView />;
 }
