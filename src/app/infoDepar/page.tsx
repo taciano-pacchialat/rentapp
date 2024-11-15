@@ -60,6 +60,26 @@ export default function DetallesDepartamento({ departamento }: PropiedadesDepart
           <h3 className="text-lg font-semibold mb-2">Descripción</h3>
           <p>{departamento.descripcion}</p>
         </div>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">Características</h3>
+          <div className="flex flex-wrap gap-2">
+            {departamento.tieneEstacionamiento && <Badge variant="secondary"><Car className="mr-1" /> Estacionamiento</Badge>}
+            {departamento.permiteMascotas && <Badge variant="secondary"><Cat className="mr-1" /> Permite Mascotas</Badge>}
+            {departamento.tienePiscina && <Badge variant="secondary"><Waves className="mr-1" /> Piscina</Badge>}
+            {departamento.tieneGimnasio && <Badge variant="secondary"><Dumbbell className="mr-1" /> Gimnasio</Badge>}
+          </div>
+        </div>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">Costos</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <span className="font-semibold">Alquiler:</span> ${departamento.precio}/mes
+            </div>
+            <div>
+              <span className="font-semibold">Expensas:</span> ${departamento.expensas}/mes
+            </div>
+          </div>
+        </div>
         {departamento.informacionAdicional && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Información Adicional</h3>
