@@ -1,4 +1,4 @@
-import AuthView from "./auth/page";
+import AuthView from "./mod-Dep/page";
 
 export default function Page() {
   return <AuthView />;
