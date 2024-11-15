@@ -1,6 +1,6 @@
 import "../globals.css";
 
-export default function AuthLayout({
+export default function TermsAndConditionsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

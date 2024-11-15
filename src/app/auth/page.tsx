@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -139,13 +140,13 @@ export default function AuthView() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
             Al continuar, aceptas nuestros{" "}
-            <a href="#" className="text-primary hover:underline">
+            <a href="/terminos-y-condiciones" className="text-primary hover:underline">
               Términos de Servicio
             </a>{" "}
             y{" "}
-            <a href="#" className="text-primary hover:underline">
+            <Link href="/terminos-y-condiciones" className="text-primary hover:underline">
               Política de Privacidad
-            </a>
+            </Link>
             .
           </p>
         </CardFooter>
