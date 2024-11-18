@@ -32,11 +32,13 @@ export default function AuthView() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [registerDNI, setRegisterDNI] = useState("");
   const [registerErrors, setRegisterErrors] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    dni: "",
   });
 
   const validateEmail = (email: string) => {
@@ -47,6 +49,11 @@ export default function AuthView() {
   const validatePassword = (password: string) => {
     const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return re.test(password);
+  };
+
+  const validateDNI = (dni: string) => {
+    const re = /^\d{7,8}$/;
+    return re.test(dni);
   };
 
   const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -69,6 +76,7 @@ export default function AuthView() {
       registerName,
       registerEmail,
       registerPassword,
+      registerDNI,
     });
 
     setTimeout(() => setIsLoading(false), 2000);
@@ -88,6 +96,7 @@ export default function AuthView() {
       email: "",
       password: "",
       confirmPassword: "",
+      dni: "",
     };
 
     if (registerName && registerName.length < 2) {
@@ -107,8 +116,12 @@ export default function AuthView() {
       errors.confirmPassword = "Las contraseñas no coinciden.";
     }
 
+    if (registerDNI && !validateDNI(registerDNI)) {
+      errors.dni = "El DNI debe tener entre 7 y 8 dígitos.";
+    }
+
     setRegisterErrors(errors);
-  }, [registerName, registerEmail, registerPassword, confirmPassword]);
+  }, [registerName, registerEmail, registerPassword, confirmPassword, registerDNI]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -203,6 +216,20 @@ export default function AuthView() {
                     />
                     {registerErrors.email && (
                       <p className="text-sm text-red-500">{registerErrors.email}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dni-register">DNI</Label>
+                    <Input
+                      id="dni-register"
+                      placeholder="12345678"
+                      required
+                      type="text"
+                      value={registerDNI}
+                      onChange={(e) => setRegisterDNI(e.target.value)}
+                    />
+                    {registerErrors.dni && (
+                      <p className="text-sm text-red-500">{registerErrors.dni}</p>
                     )}
                   </div>
                   <div className="space-y-2">
