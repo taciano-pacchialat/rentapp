@@ -55,7 +55,7 @@ export default function AuthView() {
 
     // Simulating a login attempt
     setTimeout(() => {
-      setLoginError("Invalid credentials");
+      setLoginError("Credenciales inválidas");
       setIsLoading(false);
     }, 2000);
   };
