@@ -16,6 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
+import axios from "axios";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +42,8 @@ export default function AuthView() {
     dni: "",
   });
 
+  const base_url = "http://localhost:8000";
+
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
@@ -56,33 +59,61 @@ export default function AuthView() {
     return re.test(dni);
   };
 
-  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // TODO manejar error de login correctamente
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // Simulating a login attempt
-    setTimeout(() => {
+    try {
+      const response = await axios.post(base_url + "/api/auth/login/", {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      const token = response.data.token;
+
+      // TODO almacenarlo como una cookie.
+      // Por simplicidad, se almacena en localStorage.
+      localStorage.setItem("token", token);
+    } catch {
       setLoginError("Credenciales inválidas");
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
-  const handleRegisterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // TODO: Implement registration logic here
-    console.log("Registration submitted", {
-      registerName,
-      registerEmail,
-      registerPassword,
-      registerDNI,
-    });
+    try {
+      await axios.post(base_url + "/api/auth/register/", {
+        name: registerName,
+        email: registerEmail,
+        password: registerPassword,
+        confirm_password: confirmPassword,
+        dni: registerDNI,
+      });
 
-    setTimeout(() => setIsLoading(false), 2000);
+      // TODO loguear al usuario si el registro fue exitoso
+      // setActiveTab('login');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setRegisterErrors((prevErrors) => ({
+          ...prevErrors,
+          ...error.response?.data.errors,
+        }));
+      } else {
+        setRegisterErrors((prevErrors) => ({
+          ...prevErrors,
+          general: "Ocurrió un error al registrarse. Por favor, inténtelo de nuevo.",
+        }));
+      }
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Effect to validate login form as user types
   useEffect(() => {
     if (loginEmail || loginPassword) {
       setLoginError("");
