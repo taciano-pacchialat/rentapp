@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, User, LogIn, Car, PawPrint, Waves, Dumbbell } from 'lucide-react'
+import { Search, User, LogIn, LogOut, Car, PawPrint, Waves, Dumbbell } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -40,7 +40,7 @@ const featuredApartments: Apartment[] = [
     hasPets: false,
     hasPool: true,
     hasGym: true,
-    images: ['/placeholder.svg'],
+    images: ['/images/depto1.jpg'],
     floor: 5,
     letter: 'A',
     bathrooms: 2,
@@ -58,7 +58,7 @@ const featuredApartments: Apartment[] = [
     hasPets: true,
     hasPool: true,
     hasGym: false,
-    images: ['/placeholder.svg'],
+    images: ['/images/depto2.jpg'],
     floor: 10,
     letter: 'B',
     bathrooms: 1,
@@ -76,7 +76,7 @@ const featuredApartments: Apartment[] = [
     hasPets: true,
     hasPool: false,
     hasGym: false,
-    images: ['/placeholder.svg'],
+    images: ['/images/depto2.jpg'],
     floor: 2,
     letter: 'C',
     bathrooms: 2,
@@ -94,7 +94,7 @@ const featuredApartments: Apartment[] = [
     hasPets: false,
     hasPool: false,
     hasGym: true,
-    images: ['/placeholder.svg'],
+    images: ['/images/depto1.jpg'],
     floor: 3,
     letter: 'D',
     bathrooms: 1,
@@ -107,12 +107,19 @@ export default function HomePage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const router = useRouter()
 
-  const handleLogin = () => {
-    setIsLoggedIn(true)
+  useEffect(() => {
+    // Verificar si el usuario está logueado al cargar la página
+    const userLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+    setIsLoggedIn(userLoggedIn)
+  }, [])
+
+  const handleLoginClick = () => {
+    router.push('/iniciar-sesion')
   }
 
   const handleLogout = () => {
     setIsLoggedIn(false)
+    localStorage.removeItem('isLoggedIn')
   }
 
   const handleProfileClick = () => {
@@ -125,33 +132,34 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-blue-600 text-white p-4">
+      <header className="bg-white text-gray-800 p-4 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="relative w-10 h-10">
+            <div className="relative w-20 h-20">
               <Image
-                src="/RentApp_icon.jpeg"
+                src="/images/RentApp_icon-removebg-preview.png"
                 alt="RentApp Logo"
                 layout="fill"
                 objectFit="cover"
                 className="rounded-full"
               />
             </div>
-            <span className="text-2xl font-bold">RentApp</span>
+            <span className="text-2xl font-bold text-blue-600">RentApp</span>
           </Link>
           <div className="flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                <Button variant="ghost" className="text-white" onClick={handleProfileClick}>
+                <Button variant="ghost" className="text-gray-800 hover:text-blue-600" onClick={handleProfileClick}>
                   <User className="mr-2 h-4 w-4" />
                   Mi Perfil
                 </Button>
-                <Button variant="ghost" className="text-white" onClick={handleLogout}>
+                <Button variant="ghost" className="text-gray-800 hover:text-blue-600" onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
                   Cerrar Sesión
                 </Button>
               </>
             ) : (
-              <Button variant="ghost" className="text-white" onClick={handleLogin}>
+              <Button variant="ghost" className="text-gray-800 hover:text-blue-600" onClick={handleLoginClick}>
                 <LogIn className="mr-2 h-4 w-4" />
                 Iniciar Sesión
               </Button>
@@ -198,28 +206,28 @@ export default function HomePage() {
                     <p className="text-sm text-gray-600 mb-2">{apartment.rooms} hab. | {apartment.bathrooms} baños | Piso {apartment.floor}{apartment.letter}</p>
                     <div className="flex flex-wrap gap-2 mb-2">
                       {apartment.hasParking && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          <Car className="h-3 w-3 mr-1" />
-                          Parking
-                        </span>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Car className="h-4 w-4 mr-1" />
+                          <span>Parking</span>
+                        </div>
                       )}
                       {apartment.hasPets && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          <PawPrint className="h-3 w-3 mr-1" />
-                          Mascotas
-                        </span>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <PawPrint className="h-4 w-4 mr-1" />
+                          <span>Mascotas</span>
+                        </div>
                       )}
                       {apartment.hasPool && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          <Waves className="h-3 w-3 mr-1" />
-                          Piscina
-                        </span>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Waves className="h-4 w-4 mr-1" />
+                          <span>Piscina</span>
+                        </div>
                       )}
                       {apartment.hasGym && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          <Dumbbell className="h-3 w-3 mr-1" />
-                          Gimnasio
-                        </span>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Dumbbell className="h-4 w-4 mr-1" />
+                          <span>Gimnasio</span>
+                        </div>
                       )}
                     </div>
                     <p className="text-sm text-gray-600 line-clamp-2">{apartment.description}</p>
