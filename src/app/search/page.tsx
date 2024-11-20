@@ -1,8 +1,3 @@
-/* Cambios para hacer al 12/11
-   Agregar vinculaciones con paginas, home para el logo y departamento respectivo en la ver detalle.
-   Agregar vinculaciones con Base de datos
-*/
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -18,9 +13,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { SlidersHorizontal, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { SlidersHorizontal, Search, ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import Image from "next/image"
 import Link from "next/link"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type Apartment = {
   id: number;
@@ -39,6 +35,7 @@ type Apartment = {
   bathrooms: number;
   rooms: number;
   additionalInfo: string;
+  rating: number;
 }
 
 const apartments: Apartment[] = [
@@ -63,6 +60,7 @@ const apartments: Apartment[] = [
     bathrooms: 2,
     rooms: 2,
     additionalInfo: "Recientemente renovado",
+    rating: 4.7,
   },
   {
     id: 2,
@@ -85,6 +83,7 @@ const apartments: Apartment[] = [
     bathrooms: 1,
     rooms: 1,
     additionalInfo: "Excelente ubicación",
+    rating: 3.2,
   },
   {
     id: 3,
@@ -107,6 +106,7 @@ const apartments: Apartment[] = [
     bathrooms: 2,
     rooms: 2,
     additionalInfo: "Recientemente renovado",
+    rating: 5,
   },
   {
     id: 4,
@@ -129,6 +129,7 @@ const apartments: Apartment[] = [
     bathrooms: 2,
     rooms: 2,
     additionalInfo: "Recientemente renovado",
+    rating: 2,
   },
 ]
 
@@ -197,11 +198,36 @@ function ImageCarousel({ images, name }: { images: string[], name: string }) {
   )
 }
 
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <div key={star} className="relative">
+          <Star
+            className={`h-5 w-5 ${
+              star <= Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+            }`}
+          />
+          {star > Math.floor(rating) && star <= Math.ceil(rating) && (
+            <div 
+              className="absolute top-0 left-0 overflow-hidden text-yellow-400 fill-current"
+              style={{ width: `${(rating % 1) * 100}%` }}
+            >
+              <Star className="h-5 w-5" />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function Component() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [minPrice, setMinPrice] = useState(0)
   const [maxPrice, setMaxPrice] = useState(10000000)
+  const [minRating, setMinRating] = useState(0)
   const [filters, setFilters] = useState({
     hasParking: false,
     hasPets: false,
@@ -230,6 +256,7 @@ export default function Component() {
     if (filters.rooms2 && apt.rooms !== 2) return false
     if (filters.rooms3 && apt.rooms > 2) return false
     if (apt.price && (apt.price < minPrice || apt.price > maxPrice)) return false
+    if (apt.rating < minRating) return false
     
     return true
   })
@@ -417,6 +444,22 @@ export default function Component() {
                         />
                       </div>
                     </div>
+                    <div className="space-y-4">
+                      <h3 className="font-medium">Calificación mínima</h3>
+                      <Select onValueChange={(value) => setMinRating(Number(value))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar calificación mínima" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0">Todas las calificaciones</SelectItem>
+                          <SelectItem value="1">1 estrella o más</SelectItem>
+                          <SelectItem value="2">2 estrellas o más</SelectItem>
+                          <SelectItem value="3">3 estrellas o más</SelectItem>
+                          <SelectItem value="4">4 estrellas o más</SelectItem>
+                          <SelectItem value="5">5 estrellas</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>
@@ -437,6 +480,9 @@ export default function Component() {
                 <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
                 <p className="text-sm text-gray-500 mt-2">Piso: {apartment.floor}, Letra: {apartment.letter}</p>
                 <p className="text-sm text-gray-500">Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}</p>
+                <div className="mt-2">
+                  <StarRating rating={apartment.rating} />
+                </div>
               </CardContent>
               <CardFooter className="mt-auto flex justify-between items-center">
                 <p className="text-lg font-bold">
