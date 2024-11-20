@@ -71,11 +71,22 @@ export default function AuthView() {
       });
       const token = response.data.token;
 
-      // TODO almacenarlo como una cookie.
       // Por simplicidad, se almacena en localStorage.
       localStorage.setItem("token", token);
-    } catch {
-      setLoginError("Credenciales inválidas");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setLoginError(
+            error.response.data.message || "Error al iniciar sesión. Por favor, inténtelo de nuevo."
+          );
+        } else if (error.request) {
+          setLoginError("No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.");
+        } else {
+          setLoginError("Ocurrió un error inesperado. Por favor, inténtelo de nuevo.");
+        }
+      } else {
+        setLoginError("Ocurrió un error inesperado. Por favor, inténtelo de nuevo.");
+      }
     } finally {
       setIsLoading(false);
     }
