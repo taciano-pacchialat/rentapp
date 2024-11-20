@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell } from 'lucide-react';
+import NavBar from "@/components/ui/NavBar";
 
 interface Departamento {
   id: string;
@@ -78,11 +79,9 @@ export default function AgregarDepartamento() {
 
   return (
     <TooltipProvider>
-      <div className="w-full max-w-2xl mx-auto shadow-lg">
-        <Card>
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-400">
-            <CardTitle className="text-2xl font-bold text-white">Agregar Nuevo Departamento</CardTitle>
-          </CardHeader>
+      <NavBar />
+      <div className="container mx-auto py-8 px-4">
+        <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="p-6">
             <form onSubmit={manejarEnvio} className="space-y-6">
               <div className="space-y-2">

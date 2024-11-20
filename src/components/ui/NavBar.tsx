@@ -8,15 +8,15 @@ import { Search, User } from 'lucide-react'
 export default function NavBar() {
   return (
     <nav className="bg-white shadow-md w-full">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/feature-HomePage" className="flex-shrink-0 flex items-center">
+          <Link href="/home" className="flex-shrink-0 flex items-center">
             <Image
-              src="/public/images/RentApp_icon-removebg-preview.png"
+              src="/images/RentApp_icon.png"
               alt="RentApp Logo"
-              width={40}
-              height={40}
-              className="w-auto h-8 sm:h-10"
+              width={100}
+              height={100}
+              className="w-auto h-14 sm:h-14"
               priority
             />
             <span className="ml-2 text-xl font-bold text-blue-600 hidden sm:block">RentApp</span>
