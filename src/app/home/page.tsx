@@ -214,7 +214,7 @@ export default function HomePage() {
         <section className="max-w-2xl mx-auto mb-12 text-center">
           <h2 className="text-2xl font-semibold mb-4">¿Buscas un apartamento?</h2>
           <p className="text-gray-600 mb-6">Explora nuestra amplia selección de propiedades y encuentra el hogar perfecto para ti.</p>
-          <Link href="/busqueda">
+          <Link href="/search">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg">
               Iniciar búsqueda
             </Button>

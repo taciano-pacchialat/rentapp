@@ -185,11 +185,11 @@ export default function UserPage() {
   const router = useRouter()
 
   const handleAddProperty = () => {
-    router.push('/agregar-departamento')
+    router.push('/agregarDepto')
   }
 
   const handleEditProperty = (id: number) => {
-    router.push(`/modificar-departamento/${id}`)
+    router.push(`/mod-Dep /${id}`)
   }
 
   return (
