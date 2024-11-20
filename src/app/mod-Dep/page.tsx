@@ -85,7 +85,7 @@ export default function EditApartment() {
     e.preventDefault()
     console.log('Apartment updated:', apartment)
     // Aquí iría la lógica para guardar los cambios en el backend
-    router.push('/') // Redirige a la página principal después de guardar
+    router.push('/srd') // Redirige a la página principal después de guardar
   }
 
   const handleDelete = () => {
