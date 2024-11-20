@@ -49,6 +49,11 @@ export default function AuthView() {
     return re.test(email);
   };
 
+  const validateName = (name: string) => {
+    const re = /^[A-Z][a-zA-Z ]*(?: [A-Z][a-zA-Z ]*)* [A-Z][a-zA-Z ]*(?: [A-Z][a-zA-Z ]*)*$/;
+    return re.test(name);
+  };
+
   const validatePassword = (password: string) => {
     const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return re.test(password);
@@ -110,7 +115,7 @@ export default function AuthView() {
           name: registerName,
           email: registerEmail,
           password: registerPassword,
-          confirm_password: confirmPassword,
+          password2: confirmPassword,
           dni: registerDNI,
         },
         {
@@ -173,8 +178,8 @@ export default function AuthView() {
       dni: "",
     };
 
-    if (registerName && registerName.length < 2) {
-      errors.name = "El nombre debe tener al menos 2 caracteres.";
+    if (registerName && !validateName(registerName)) {
+      errors.name = "Por favor, ingrese un nombre válido.";
     }
 
     if (registerEmail && !validateEmail(registerEmail)) {
