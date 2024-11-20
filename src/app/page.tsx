@@ -1,5 +1,5 @@
-import AuthView from "./mod-Dep/page";
+import HomePage from "./feature-HomePage/page";
 
 export default function Page() {
-  return <AuthView />;
+  return <HomePage />;
 }
