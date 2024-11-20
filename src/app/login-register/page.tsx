@@ -97,7 +97,7 @@ export default function AuthView() {
     setIsLoading(true);
 
     try {
-      await axios.post(base_url + "/api/auth/register/", {
+      const registrationResponse = await axios.post(base_url + "/api/auth/register/", {
         name: registerName,
         email: registerEmail,
         password: registerPassword,
@@ -105,7 +105,16 @@ export default function AuthView() {
         dni: registerDNI,
       });
 
-      // TODO loguear al usuario si el registro fue exitoso
+      if (registrationResponse.status === 201) {
+        const loginResponse = await axios.post(base_url + "/api/auth/login/", {
+          email: registerEmail,
+          password: registerPassword,
+        });
+
+        const token = loginResponse.data.token;
+        localStorage.setItem("token", token);
+      }
+
       // setActiveTab('login');
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
