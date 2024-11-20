@@ -72,7 +72,7 @@ export default function AuthView() {
       const response = await axios.post(
         base_url + "/api/auth/login/",
         {
-          email: loginEmail,
+          username: loginEmail,
           password: loginPassword,
         },
         {
@@ -129,12 +129,12 @@ export default function AuthView() {
         const loginResponse = await axios.post(
           base_url + "/api/auth/login/",
           {
-            email: registerEmail,
+            username: registerEmail,
             password: registerPassword,
           },
           {
             headers: {
-              "Content-Type": "applications/json",
+              "Content-Type": "application/json",
             },
           }
         );
