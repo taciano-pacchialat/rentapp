@@ -59,16 +59,23 @@ export default function AuthView() {
     return re.test(dni);
   };
 
-  // TODO manejar error de login correctamente
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
     try {
-      const response = await axios.post(base_url + "/api/auth/login/", {
-        email: loginEmail,
-        password: loginPassword,
-      });
+      const response = await axios.post(
+        base_url + "/api/auth/login/",
+        {
+          email: loginEmail,
+          password: loginPassword,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const token = response.data.token;
 
       // Por simplicidad, se almacena en localStorage.
@@ -97,19 +104,35 @@ export default function AuthView() {
     setIsLoading(true);
 
     try {
-      const registrationResponse = await axios.post(base_url + "/api/auth/register/", {
-        name: registerName,
-        email: registerEmail,
-        password: registerPassword,
-        confirm_password: confirmPassword,
-        dni: registerDNI,
-      });
-
-      if (registrationResponse.status === 201) {
-        const loginResponse = await axios.post(base_url + "/api/auth/login/", {
+      const registrationResponse = await axios.post(
+        base_url + "/api/auth/register/",
+        {
+          name: registerName,
           email: registerEmail,
           password: registerPassword,
-        });
+          confirm_password: confirmPassword,
+          dni: registerDNI,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (registrationResponse.status === 201) {
+        const loginResponse = await axios.post(
+          base_url + "/api/auth/login/",
+          {
+            email: registerEmail,
+            password: registerPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "applications/json",
+            },
+          }
+        );
 
         const token = loginResponse.data.token;
         localStorage.setItem("token", token);
