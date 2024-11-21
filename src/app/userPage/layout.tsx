@@ -1,6 +1,6 @@
 import "../globals.css";
 
-export default function SearchLayout({
+export default function userLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
