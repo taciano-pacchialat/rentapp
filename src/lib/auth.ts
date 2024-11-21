@@ -1,6 +1,5 @@
+import { BASE_URL } from "@/config/config";
 import axios from "axios";
-
-const base_url = "http://localhost:8000";
 
 export type AuthResponse = {
   success: boolean;
@@ -17,7 +16,7 @@ export async function registerUser(data: {
   dni: string;
 }): Promise<AuthResponse> {
   try {
-    const response = await axios.post(`${base_url}/api/auth/register/`, data, {
+    const response = await axios.post(`${BASE_URL}/api/auth/register/`, data, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -47,7 +46,7 @@ export async function loginUser(data: {
   password: string;
 }): Promise<AuthResponse> {
   try {
-    const response = await axios.post(`${base_url}/api/auth/login/`, data, {
+    const response = await axios.post(`${BASE_URL}/api/auth/login/`, data, {
       headers: {
         "Content-Type": "application/json",
       },
