@@ -16,7 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
-import axios from "axios";
+import { loginUser, registerUser } from "@/lib/auth";
+import { validateDNI, validateEmail, validateName, validatePassword } from "@/lib/utils";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,124 +43,60 @@ export default function AuthView() {
     dni: "",
   });
 
-  const base_url = "http://localhost:8000";
-
-  const validateEmail = (email: string) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  const validateName = (name: string) => {
-    const re = /^[A-Z][a-zA-Z ]*(?: [A-Z][a-zA-Z ]*)* [A-Z][a-zA-Z ]*(?: [A-Z][a-zA-Z ]*)*$/;
-    return re.test(name);
-  };
-
-  const validatePassword = (password: string) => {
-    const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    return re.test(password);
-  };
-
-  const validateDNI = (dni: string) => {
-    const re = /^\d{7,8}$/;
-    return re.test(dni);
-  };
-
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    try {
-      const response = await axios.post(
-        base_url + "/api/auth/login/",
-        {
-          username: loginEmail,
-          password: loginPassword,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const token = response.data.token;
+    const loginData = {
+      username: loginEmail,
+      password: loginPassword,
+    };
 
-      // Por simplicidad, se almacena en localStorage.
-      localStorage.setItem("token", token);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response) {
-          setLoginError(
-            error.response.data.message || "Error al iniciar sesión. Por favor, inténtelo de nuevo."
-          );
-        } else if (error.request) {
-          setLoginError("No se pudo conectar con el servidor. Por favor, inténtelo de nuevo.");
-        } else {
-          setLoginError("Ocurrió un error inesperado. Por favor, inténtelo de nuevo.");
-        }
-      } else {
-        setLoginError("Ocurrió un error inesperado. Por favor, inténtelo de nuevo.");
-      }
-    } finally {
-      setIsLoading(false);
+    const response = await loginUser(loginData);
+
+    if (response.success) {
+      // TODO redirigir a home
+    } else {
+      setLoginError(response.message || "Error durante el inicio de sesión.");
     }
+
+    setIsLoading(false);
   };
 
   const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    try {
-      const registrationResponse = await axios.post(
-        base_url + "/api/auth/register/",
-        {
-          name: registerName,
-          email: registerEmail,
-          password: registerPassword,
-          password2: confirmPassword,
-          dni: registerDNI,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    const registrationData = {
+      name: registerName,
+      email: registerEmail,
+      password: registerPassword,
+      password2: confirmPassword,
+      dni: registerDNI,
+    };
 
-      if (registrationResponse.status === 201) {
-        const loginResponse = await axios.post(
-          base_url + "/api/auth/login/",
-          {
-            username: registerEmail,
-            password: registerPassword,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    const response = await registerUser(registrationData);
 
-        const token = loginResponse.data.token;
-        localStorage.setItem("token", token);
-      }
-
-      // setActiveTab('login');
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+    if (response.success) {
+      // TODO redirigir a home
+      setActiveTab("login");
+    } else {
+      setRegisterErrors({
+        name: response.errors?.name || "",
+        email: response.errors?.email || "",
+        password: response.errors?.password || "",
+        confirmPassword: response.errors?.confirmPassword || "",
+        dni: response.errors?.dni || "",
+      });
+      if (response.message) {
         setRegisterErrors((prevErrors) => ({
           ...prevErrors,
-          ...error.response?.data.errors,
-        }));
-      } else {
-        setRegisterErrors((prevErrors) => ({
-          ...prevErrors,
-          general: "Ocurrió un error al registrarse. Por favor, inténtelo de nuevo.",
+          general: response.message,
         }));
       }
-      console.error(error);
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   useEffect(() => {
