@@ -272,6 +272,7 @@ class Cache {
 
   public addData(newItem: Apartment): void {
     this.data.push(newItem);
+    console.log("Se ha añadido un nuevo apartamento:", newItem);
   }
 
   public updateData(id: number, updatedData: Partial<Apartment>): void {

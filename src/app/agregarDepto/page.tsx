@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,9 +11,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell } from 'lucide-react';
 import NavBar from "@/components/ui/NavBar";
+import cache from "@/lib/cache";
+import userInfo from "@/lib/userInfo";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Departamento {
   id: string;
+  nombre: string;
   imagen: string;
   piso: number;
   letra: string;
@@ -28,9 +41,31 @@ interface Departamento {
   tieneGimnasio: boolean;
 }
 
+type Apartment = {
+  id: number;
+  name: string;
+  price: number;
+  expenses: number;
+  owner: string;
+  description: string;
+  hasParking: boolean;
+  hasPets: boolean;
+  hasPool: boolean;
+  hasGym: boolean;
+  images: string[];
+  floor: number;
+  letter: string;
+  bathrooms: number;
+  rooms: number;
+  additionalInfo: string;
+  rating: number;
+}
+
 export default function AgregarDepartamento() {
+  const router = useRouter();
   const [nuevoDepartamento, setNuevoDepartamento] = useState<Departamento>({
     id: '',
+    nombre: '',
     imagen: '',
     piso: 0,
     letra: '',
@@ -45,6 +80,7 @@ export default function AgregarDepartamento() {
     tienePiscina: false,
     tieneGimnasio: false
   });
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -55,12 +91,38 @@ export default function AgregarDepartamento() {
     setNuevoDepartamento(prev => ({ ...prev, [nombre]: marcado }));
   };
 
-  const manejarEnvio = (e: React.FormEvent) => {
+  const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Nuevo departamento:', nuevoDepartamento);
-    // Aquí iría la lógica para guardar el departamento en la base de datos
+    const apartments = await cache.getInstance().getAll();
+    const newApartment: Apartment = {
+      id: apartments.length + 1,
+      name: nuevoDepartamento.nombre,
+      price: nuevoDepartamento.precio,
+      expenses: nuevoDepartamento.expensas,
+      owner: userInfo.getInstance().getUsuario(),
+      description: nuevoDepartamento.descripcion,
+      hasParking: nuevoDepartamento.tieneEstacionamiento,
+      hasPets: nuevoDepartamento.permiteMascotas,
+      hasPool: nuevoDepartamento.tienePiscina,
+      hasGym: nuevoDepartamento.tieneGimnasio,
+      images: [nuevoDepartamento.imagen],
+      floor: nuevoDepartamento.piso,
+      letter: nuevoDepartamento.letra,
+      bathrooms: nuevoDepartamento.banos,
+      rooms: nuevoDepartamento.ambientes,
+      additionalInfo: nuevoDepartamento.informacionAdicional,
+      rating: 0
+    }
+    cache.getInstance().addData(newApartment);
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmation = () => {
+    setShowConfirmation(false);
     setNuevoDepartamento({
       id: '',
+      nombre: '',
       imagen: '',
       piso: 0,
       letra: '',
@@ -75,6 +137,7 @@ export default function AgregarDepartamento() {
       tienePiscina: false,
       tieneGimnasio: false
     });
+    router.push('/userPage');
   };
 
   return (
@@ -84,6 +147,20 @@ export default function AgregarDepartamento() {
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="p-6">
             <form onSubmit={manejarEnvio} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="nombre" className="flex items-center space-x-2">
+                  <Home size={18} />
+                  <span>Nombre del Departamento</span>
+                </Label>
+                <Input 
+                  id="nombre" 
+                  name="nombre" 
+                  onChange={manejarCambioInput} 
+                  value={nuevoDepartamento.nombre} 
+                  placeholder="Ingrese el nombre del departamento"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="imagen" className="flex items-center space-x-2">
                   <Upload size={18} />
@@ -233,6 +310,21 @@ export default function AgregarDepartamento() {
           </CardContent>
         </Card>
       </div>
+
+      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Propiedad Agregada con Éxito</AlertDialogTitle>
+            <AlertDialogDescription>
+              La propiedad ha sido agregada correctamente a su lista.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleConfirmation}>Aceptar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </TooltipProvider>
   );
 }
+
