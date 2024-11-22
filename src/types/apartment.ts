@@ -8,6 +8,7 @@ export type Apartment = {
   hasParking: boolean;
   hasPets: boolean;
   hasPool: boolean;
+  rating: number;
   hasGym: boolean;
   images: string[];
   floor: number;
