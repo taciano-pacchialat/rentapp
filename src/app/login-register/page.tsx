@@ -17,7 +17,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import { loginUser, registerUser } from "@/lib/auth";
-import { validateDNI, validateEmail, validateName, validatePassword } from "@/lib/utils";
+import {
+  validateDNI,
+  validateEmail,
+  validateName,
+  validatePassword,
+  validatePhone,
+} from "@/lib/utils";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +38,7 @@ export default function AuthView() {
   // Register form
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPhone, setRegisterPhone] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [registerDNI, setRegisterDNI] = useState("");
@@ -41,6 +48,7 @@ export default function AuthView() {
     password: "",
     confirmPassword: "",
     dni: "",
+    phone: "",
   });
 
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -73,6 +81,7 @@ export default function AuthView() {
       password: registerPassword,
       password2: confirmPassword,
       dni: registerDNI,
+      phone_number: registerPhone,
     };
 
     const response = await registerUser(registrationData);
@@ -84,6 +93,7 @@ export default function AuthView() {
       setRegisterErrors({
         name: response.errors?.name || "",
         email: response.errors?.email || "",
+        phone: response.errors?.phone || "",
         password: response.errors?.password || "",
         confirmPassword: response.errors?.confirmPassword || "",
         dni: response.errors?.dni || "",
@@ -109,6 +119,7 @@ export default function AuthView() {
     const errors = {
       name: "",
       email: "",
+      phone: "",
       password: "",
       confirmPassword: "",
       dni: "",
@@ -120,6 +131,10 @@ export default function AuthView() {
 
     if (registerEmail && !validateEmail(registerEmail)) {
       errors.email = "Por favor, ingrese un email válido.";
+    }
+
+    if (registerPhone && !validatePhone(registerPhone)) {
+      errors.phone = "Por favor, ingrese un número de teléfono válido.";
     }
 
     if (registerPassword && !validatePassword(registerPassword)) {
@@ -136,26 +151,7 @@ export default function AuthView() {
     }
 
     setRegisterErrors(errors);
-  }, [registerName, registerEmail, registerPassword, confirmPassword, registerDNI]);
-
-  const hasErrors = (errors: { [key: string]: string }) => {
-    return Object.values(errors).some((error) => error !== "");
-  };
-
-  const isRegisterDisabled = () => {
-    return (
-      !registerName ||
-      !registerEmail ||
-      !registerPassword ||
-      !confirmPassword ||
-      !registerDNI ||
-      hasErrors(registerErrors)
-    );
-  };
-
-  const isLoginDisabled = () => {
-    return !loginEmail || !loginPassword || loginError !== "";
-  };
+  }, [registerName, registerEmail, registerPhone, registerPassword, confirmPassword, registerDNI]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -215,7 +211,7 @@ export default function AuthView() {
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     type="submit"
-                    disabled={isLoading || isLoginDisabled()}
+                    disabled={isLoading}
                   >
                     {isLoading ? "Cargando..." : "Iniciar Sesión"}
                   </Button>
@@ -250,6 +246,20 @@ export default function AuthView() {
                     />
                     {registerErrors.email && (
                       <p className="text-sm text-red-500">{registerErrors.email}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone-register">Número de Teléfono</Label>
+                    <Input
+                      id="phone-register"
+                      placeholder="+1234567890"
+                      required
+                      type="tel"
+                      value={registerPhone}
+                      onChange={(e) => setRegisterPhone(e.target.value)}
+                    />
+                    {registerErrors.phone && (
+                      <p className="text-sm text-red-500">{registerErrors.phone}</p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -310,7 +320,7 @@ export default function AuthView() {
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     type="submit"
-                    disabled={isLoading || isRegisterDisabled()}
+                    disabled={isLoading}
                   >
                     {isLoading ? "Cargando..." : "Registrarse"}
                   </Button>
