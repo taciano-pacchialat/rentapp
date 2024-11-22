@@ -25,4 +25,7 @@ export const validateDNI = (dni: string) => {
   return re.test(dni);
 };
 
-
+export const validatePhone = (phone: string) => {
+  const re = /^\+?\d{9,15}$/;
+  return re.test(phone);
+};
