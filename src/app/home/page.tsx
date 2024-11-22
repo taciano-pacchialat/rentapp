@@ -117,7 +117,7 @@ export default function HomePage() {
 
   useEffect(() => {
     async function fetchApartments() {
-      const data = await cacheInstance.getAll();
+      const data = await cacheInstance.filterByRating(4);
       setApartments(data);
     }
     fetchApartments();

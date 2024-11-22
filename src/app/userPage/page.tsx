@@ -1,3 +1,5 @@
+//Seria necesario tener alguna informacion del usuario en cada pagina para poder filtrar por nombre de usuario
+//en la parte de owner del objeto departament. 
 'use client'
 
 import React from 'react'

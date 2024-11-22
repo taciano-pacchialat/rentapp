@@ -254,7 +254,14 @@ class Cache {
     return this.data.filter((item) =>
       Object.entries(criteria).every(([key, value]) => item[key as keyof Apartment] === value)
     );
-  }
+  } // En principio no sirve para filtrar por estrellas. 
+
+  public async filterByRating(rating: number): Promise<Apartment[]> {
+    if (!this.isLoaded) {
+      await this.initialize();
+    }
+    return this.data.filter((item) => item.rating >= rating);
+  } 
 
   public addData(newItem: Apartment): void {
     this.data.push(newItem);
@@ -263,8 +270,10 @@ class Cache {
   public updateData(id: number, updatedData: Partial<Apartment>): void {
     this.data = this.data.map((item) =>
       item.id === id ? { ...item, ...updatedData } : item
-    );
+    ); 
   }
+
+
 
   public removeData(id: number): void {
     this.data = this.data.filter((item) => item.id !== id);
