@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-2 sm:px-6 lg:px-8">
-      <Link href="/auth" className="absolute top-4 left-4 z-10">
+      <Link href="/login-register" className="absolute top-4 left-4 z-10">
         <Button type="button" className="hover:bg-transparent p-2">
           <ArrowLeft className="w-full broder-2 max-2-2xl" />
         </Button>

@@ -1,12 +1,14 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import NavBar from "@/components/ui/NavBar"
+import DetailButton from '@/components/ui/detail-button'
+import cache from '@/components/cache'
 
 interface Apartment {
   id: number;
@@ -28,100 +30,7 @@ interface Apartment {
   rating: number;
 }
 
-const featuredApartments: Apartment[] = [
-  {
-    id: 1,
-    name: "Apartamento de lujo en el centro",
-    price: 200000,
-    expenses: 15000,
-    owner: "Juan Pérez",
-    description: "Moderno apartamento de 2 dormitorios en el corazón del centro",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: false,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 5,
-    letter: "A",
-    bathrooms: 2,
-    rooms: 2,
-    additionalInfo: "Recientemente renovado",
-    rating: 4.7,
-  },
-  {
-    id: 2,
-    name: "Acogedor estudio",
-    price: 120000,
-    expenses: 8000,
-    owner: "María González",
-    description: "Cómodo estudio perfecto para solteros o parejas",
-    hasParking: false,
-    hasPets: false,
-    hasPool: false,
-    hasGym: true,
-    images: [
-      "/images/depto1.jpg",
-      "/images/depto2.jpg",
-      "/images/depto1.jpg"
-    ],
-    floor: 2,
-    letter: "B",
-    bathrooms: 1,
-    rooms: 1,
-    additionalInfo: "Excelente ubicación",
-    rating: 3.2,
-  },
-  {
-    id: 3,
-    name: "Apartamento familiar con vista",
-    price: 250000,
-    expenses: 20000,
-    owner: "Carlos Rodríguez",
-    description: "Espacioso apartamento de 3 dormitorios con hermosa vista a la ciudad",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: true,
-    images: [
-      "/images/depto2.jpg",
-      "/images/depto1.jpg",
-      "/images/depto2.jpg"
-    ],
-    floor: 8,
-    letter: "C",
-    bathrooms: 2,
-    rooms: 3,
-    additionalInfo: "Terraza privada",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "Loft moderno en zona trendy",
-    price: 180000,
-    expenses: 12000,
-    owner: "Ana Martínez",
-    description: "Loft de diseño en el corazón del barrio más de moda",
-    hasParking: false,
-    hasPets: true,
-    hasPool: false,
-    hasGym: true,
-    images: [
-      "/images/depto1.jpg",
-      "/images/depto2.jpg",
-      "/images/1.jpg"
-    ],
-    floor: 3,
-    letter: "D",
-    bathrooms: 1,
-    rooms: 1,
-    additionalInfo: "Cerca de restaurantes y vida nocturna",
-    rating: 4.2,
-  },
-]
+const cacheInstance = cache.getInstance();
 
 function ImageCarousel({ images, name }: { images: string[], name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
@@ -204,6 +113,16 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function HomePage() {
+  const [featuredApartments, setApartments] = useState<Apartment[]>([]);
+
+  useEffect(() => {
+    async function fetchApartments() {
+      const data = await cacheInstance.filterByRating(4);
+      setApartments(data);
+    }
+    fetchApartments();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
       <NavBar />
@@ -247,9 +166,7 @@ export default function HomePage() {
                   </p>
                 </CardFooter>
                 <CardFooter>
-                  <Link href={`/departamento/${apartment.id}`} className="w-full">
-                    <Button className="w-full">Ver detalles</Button>
-                  </Link>
+                  <DetailButton apartmentId={apartment.id} />
                 </CardFooter>
               </Card>
             ))}
