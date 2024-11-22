@@ -24,12 +24,12 @@ export default function AuthView() {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
-  // Login form state
+  // Login form
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  // Register form state
+  // Register form
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
@@ -105,7 +105,6 @@ export default function AuthView() {
     }
   }, [loginEmail, loginPassword]);
 
-  // Effect to validate register form as user types
   useEffect(() => {
     const errors = {
       name: "",
@@ -138,6 +137,25 @@ export default function AuthView() {
 
     setRegisterErrors(errors);
   }, [registerName, registerEmail, registerPassword, confirmPassword, registerDNI]);
+
+  const hasErrors = (errors: { [key: string]: string }) => {
+    return Object.values(errors).some((error) => error !== "");
+  };
+
+  const isRegisterDisabled = () => {
+    return (
+      !registerName ||
+      !registerEmail ||
+      !registerPassword ||
+      !confirmPassword ||
+      !registerDNI ||
+      hasErrors(registerErrors)
+    );
+  };
+
+  const isLoginDisabled = () => {
+    return !loginEmail || !loginPassword || loginError !== "";
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -197,7 +215,7 @@ export default function AuthView() {
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || isLoginDisabled()}
                   >
                     {isLoading ? "Cargando..." : "Iniciar Sesión"}
                   </Button>
@@ -292,7 +310,7 @@ export default function AuthView() {
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || isRegisterDisabled()}
                   >
                     {isLoading ? "Cargando..." : "Registrarse"}
                   </Button>

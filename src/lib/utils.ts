@@ -16,7 +16,7 @@ export const validateName = (name: string) => {
 };
 
 export const validatePassword = (password: string) => {
-  const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+  const re = /^(?=(?:.*\d){2,})(?=(?:.*[@$!%*#?&]){2,})(?=(?:.*[A-Z]){2,}).{8,}$/;
   return re.test(password);
 };
 
@@ -24,3 +24,5 @@ export const validateDNI = (dni: string) => {
   const re = /^\d{7,8}$/;
   return re.test(dni);
 };
+
+
