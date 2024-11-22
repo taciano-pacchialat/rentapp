@@ -93,3 +93,32 @@ export async function deleteApartment(apartmentId: number): Promise<ApartmentRes
     }
   }
 }
+
+export async function addApartment(data: Partial<Apartment>): Promise<ApartmentResponse> {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.post(`${BASE_URL}/api/apartments/`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    });
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        errors: error.response.data.errors || {},
+        message: error.response.data.message || "Error al agregar el departamento.",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error inesperado al agregar.",
+      };
+    }
+  }
+}
