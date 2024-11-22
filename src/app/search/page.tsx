@@ -17,6 +17,8 @@ import { SlidersHorizontal, Search, ChevronLeft, ChevronRight, Star } from 'luci
 import Image from "next/image"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import cache from '@/components/cache'
+import DetailButton from '@/components/ui/detail-button'
 
 type Apartment = {
   id: number;
@@ -38,100 +40,7 @@ type Apartment = {
   rating: number;
 }
 
-const apartments: Apartment[] = [
-  {
-    id: 1,
-    name: "Apartamento de lujo en el centro",
-    price: 200000,
-    expenses: 15000,
-    owner: "Juan Pérez",
-    description: "Moderno apartamento de 2 dormitorios en el corazón del centro",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: false,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 5,
-    letter: "A",
-    bathrooms: 2,
-    rooms: 2,
-    additionalInfo: "Recientemente renovado",
-    rating: 4.7,
-  },
-  {
-    id: 2,
-    name: "Acogedor estudio",
-    price: 120000,
-    expenses: 8000,
-    owner: "María González",
-    description: "Cómodo estudio perfecto para solteros o parejas",
-    hasParking: false,
-    hasPets: false,
-    hasPool: false,
-    hasGym: true,
-    images: [
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg"
-    ],
-    floor: 2,
-    letter: "B",
-    bathrooms: 1,
-    rooms: 1,
-    additionalInfo: "Excelente ubicación",
-    rating: 3.2,
-  },
-  {
-    id: 3,
-    name: "Apartamento familiar",
-    price: 250000,
-    expenses: 20000,
-    owner: "Carlos Rodríguez",
-    description: "Espacioso apartamento de 3 dormitorios ideal para familias",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: true,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 7,
-    letter: "C",
-    bathrooms: 2,
-    rooms: 3,
-    additionalInfo: "Cerca de escuelas y parques",
-    rating: 5,
-  },
-  {
-    id: 4,
-    name: "Loft moderno",
-    price: 180000,
-    expenses: 12000,
-    owner: "Ana Martínez",
-    description: "Loft de diseño con amplios espacios abiertos",
-    hasParking: true,
-    hasPets: false,
-    hasPool: false,
-    hasGym: true,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 3,
-    letter: "D",
-    bathrooms: 1,
-    rooms: 1,
-    additionalInfo: "Perfecto para profesionales",
-    rating: 4.2,
-  },
-]
+let cacheInstance: cache = cache.getInstance();
 
 function ImageCarousel({ images, name }: { images: string[], name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -150,7 +59,7 @@ function ImageCarousel({ images, name }: { images: string[], name: string }) {
   }
 
   if (!isMounted) {
-    return null // or a loading placeholder
+    return null
   }
 
   return (
@@ -243,6 +152,16 @@ export default function Component() {
     setIsMounted(true)
   }, [])
 
+  const [apartments, setApartments] = useState<Apartment[]>([]);
+
+  useEffect(() => {
+    async function fetchApartments() {
+      const data = await cacheInstance.getAll();
+      setApartments(data);
+    }
+    fetchApartments();
+  }, []);
+
   const filteredApartments = apartments.filter(apt => {
     if (searchQuery && !apt.name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false
@@ -262,7 +181,7 @@ export default function Component() {
   })
 
   if (!isMounted) {
-    return null // or a loading placeholder
+    return null
   }
 
   return (
@@ -447,7 +366,8 @@ export default function Component() {
                           min="0"
                           max="10000000"
                           value={maxPrice}
-                          onChange={(e) => setMaxPrice(Number(e.target.value))}
+                          onChange={(e) => setMaxPrice(Number(e.target.value))
+                          }
                           placeholder="Precio máximo"
                         />
                       </div>
@@ -502,9 +422,7 @@ export default function Component() {
                   </p>
                 </CardFooter>
                 <CardFooter>
-                  <Link href={`/apartment/${apartment.id}`} className="w-full">
-                    <Button className="w-full">Ver detalles</Button>
-                  </Link>
+                  <DetailButton apartmentId={apartment.id} />
                 </CardFooter>
               </Card>
             ))}
