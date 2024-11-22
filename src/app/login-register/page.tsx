@@ -16,6 +16,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
+import { loginUser, registerUser } from "@/lib/auth";
+import { validateDNI, validateEmail, validateName, validatePassword } from "@/lib/utils";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,48 +43,62 @@ export default function AuthView() {
     dni: "",
   });
 
-  const validateEmail = (email: string) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    const re = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    return re.test(password);
-  };
-
-  const validateDNI = (dni: string) => {
-    const re = /^\d{7,8}$/;
-    return re.test(dni);
-  };
-
-  const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // Simulating a login attempt
-    setTimeout(() => {
-      setLoginError("Credenciales inválidas");
-      setIsLoading(false);
-    }, 2000);
+    const loginData = {
+      username: loginEmail,
+      password: loginPassword,
+    };
+
+    const response = await loginUser(loginData);
+
+    if (response.success) {
+      // TODO redirigir a home
+    } else {
+      setLoginError(response.message || "Error durante el inicio de sesión.");
+    }
+
+    setIsLoading(false);
   };
 
-  const handleRegisterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRegisterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // TODO: Implement registration logic here
-    console.log("Registration submitted", {
-      registerName,
-      registerEmail,
-      registerPassword,
-      registerDNI,
-    });
+    const registrationData = {
+      name: registerName,
+      email: registerEmail,
+      password: registerPassword,
+      password2: confirmPassword,
+      dni: registerDNI,
+    };
 
-    setTimeout(() => setIsLoading(false), 2000);
+    const response = await registerUser(registrationData);
+
+    if (response.success) {
+      // TODO redirigir a home
+      setActiveTab("login");
+    } else {
+      setRegisterErrors({
+        name: response.errors?.name || "",
+        email: response.errors?.email || "",
+        password: response.errors?.password || "",
+        confirmPassword: response.errors?.confirmPassword || "",
+        dni: response.errors?.dni || "",
+      });
+      if (response.message) {
+        setRegisterErrors((prevErrors) => ({
+          ...prevErrors,
+          general: response.message,
+        }));
+      }
+    }
+
+    setIsLoading(false);
   };
 
-  // Effect to validate login form as user types
   useEffect(() => {
     if (loginEmail || loginPassword) {
       setLoginError("");
@@ -99,8 +115,8 @@ export default function AuthView() {
       dni: "",
     };
 
-    if (registerName && registerName.length < 2) {
-      errors.name = "El nombre debe tener al menos 2 caracteres.";
+    if (registerName && !validateName(registerName)) {
+      errors.name = "Por favor, ingrese un nombre válido.";
     }
 
     if (registerEmail && !validateEmail(registerEmail)) {
