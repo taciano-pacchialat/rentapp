@@ -1,12 +1,13 @@
-'use client'
-
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Home, Bath, Box, DollarSign, Car, Dumbbell, Waves, Cat, Info, ChevronLeft, ChevronRight, Star, User } from 'lucide-react'
-import NavBar from "@/components/ui/NavBar"
-
+// pages/infoDepar/[id].tsx
+'use client';   
+import { useRouter, useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import NavBar from '@/components/ui/NavBar';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Home, Bath, Box, DollarSign, Car, Dumbbell, Waves, Cat, Info, ChevronLeft, ChevronRight, Star, User } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import cache from "@/lib/cache";
 interface Apartment {
   id: number;
   name: string;
@@ -27,23 +28,39 @@ interface Apartment {
   rating: number;
 }
 
-interface DetallesDepartamentoProps {
-  apartment: Apartment;
-}
 
-const DetallesDepartamento: React.FC<DetallesDepartamentoProps> = ({ apartment }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+export default function DetallesDepartamentoPage() {
+  const router = useRouter();
+  const { id } = useParams();
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (id) {
+      const fetchApartment = async () => {
+        const apartmentData = await cache.getInstance().getBYId(Number(id));
+        if (apartmentData) {
+          setApartment(apartmentData);
+        }
+      };
+      fetchApartment();
+    }
+  }, [id]);
 
   const prevImage = () => {
     setCurrentImageIndex((prevIndex) => 
-      prevIndex === 0 ? apartment.images.length - 1 : prevIndex - 1
-    )
-  }
+      apartment ? (prevIndex === 0 ? apartment.images.length - 1 : prevIndex - 1) : prevIndex
+    );
+  };
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => 
-      prevIndex === apartment.images.length - 1 ? 0 : prevIndex + 1
-    )
+      apartment ? (prevIndex === apartment.images.length - 1 ? 0 : prevIndex + 1) : prevIndex
+    );
+  };
+
+  if (!apartment) {
+    return <div>Cargando...</div>;
   }
 
   const renderStars = () => {
@@ -164,4 +181,3 @@ const DetallesDepartamento: React.FC<DetallesDepartamentoProps> = ({ apartment }
   )
 }
 
-export default DetallesDepartamento

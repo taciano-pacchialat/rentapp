@@ -1,4 +1,4 @@
-import AuthView from "./login-register/page";
+import AuthView from "./home/page";
 
 export default function Page() {
   return <AuthView />;

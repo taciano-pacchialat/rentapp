@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import NavBar from "@/components/ui/NavBar"
 import DetailButton from '@/components/ui/detail-button'
-import cache from '@/components/cache'
+import cache from '@/lib/cache'
 
 interface Apartment {
   id: number;
