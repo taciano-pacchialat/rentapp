@@ -91,8 +91,8 @@ export default function DetallesDepartamentoPage() {
   return (
     <>
       <NavBar />
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader>
+      <Card className="w-full max-w-2xl mx-auto mt-8">
+        <CardHeader >
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl font-bold text-blue-600">{apartment.name}</CardTitle>
             <div className="flex items-center">
