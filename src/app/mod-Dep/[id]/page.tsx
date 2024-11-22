@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import NavBar from '@/components/ui/NavBar'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell, Star, Trash2 } from 'lucide-react'
+import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell, Trash2 } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -29,69 +29,88 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import cache from "@/lib/cache"
 
 interface Apartment {
-  id: number
-  name: string
-  image: string
-  floor: number
-  letter: string
-  description: string
-  bathrooms: number
-  rooms: number
-  additionalInfo: string
-  price: number
-  expenses: number
-  hasParking: boolean
-  hasPets: boolean
-  hasPool: boolean
-  hasGym: boolean
+  id: number;
+  name: string;
+  images: string[];
+  floor: number;
+  letter: string;
+  description: string;
+  bathrooms: number;
+  rooms: number;
+  additionalInfo: string;
+  price: number;
+  expenses: number;
+  hasParking: boolean;
+  hasPets: boolean;
+  hasPool: boolean;
+  hasGym: boolean;
 }
 
-export default function EditApartment() {
-  const router = useRouter()
-  const [apartment, setApartment] = useState<Apartment>({
-    id: 1,
-    name: "Apartamento de lujo en el centro",
-    image: '',
-    floor: 5,
-    letter: 'A',
-    description: "Moderno apartamento de 2 dormitorios en el corazón del centro",
-    bathrooms: 2,
-    rooms: 2,
-    additionalInfo: "Recientemente renovado",
-    price: 200000,
-    expenses: 15000,
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: false
-  })
+export default function EditApartmentPage() {
+  const router = useRouter();
+  const { id } = useParams();
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      const fetchApartment = async () => {
+        const apartmentData = await cache.getInstance().getBYId(Number(id));
+        if (apartmentData) {
+          setApartment(apartmentData);
+        }
+      };
+      fetchApartment();
+    }
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setApartment(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setApartment(prev => prev ? { ...prev, [name]: value } : null);
+  };
 
   const handleCheckboxChange = (name: string) => (checked: boolean) => {
-    setApartment(prev => ({ ...prev, [name]: checked }))
-  }
+    setApartment(prev => prev ? { ...prev, [name]: checked } : null);
+  };
 
   const handleSelectChange = (name: string) => (value: string) => {
-    setApartment(prev => ({ ...prev, [name]: parseInt(value) }))
-  }
+    setApartment(prev => prev ? { ...prev, [name]: parseInt(value) } : null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+        setApartment(prev => prev ? { ...prev, image: reader.result as string } : null);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Apartment updated:', apartment)
-    // Aquí iría la lógica para guardar los cambios en el backend
-    router.push('/srd') // Redirige a la página principal después de guardar
-  }
+    e.preventDefault();
+    if (apartment) {
+      cache.getInstance().updateData(apartment.id, apartment);
+      console.log('Apartment updated:', apartment);
+      router.push('/userPage'); // Redirige a la página principal después de guardar
+    }
+  };
 
   const handleDelete = () => {
-    console.log('Apartment deleted:', apartment.id)
-    // Aquí iría la lógica para eliminar el apartamento en el backend
-    router.push('/') // Redirige a la página principal después de eliminar
+    if (apartment) {
+      cache.getInstance().removeData(apartment.id);
+      console.log('Apartment deleted:', apartment.id);
+      router.push('/userPage'); // Redirige a la página principal después de eliminar
+    }
+  };
+
+  if (!apartment) {
+    return <div>Cargando...</div>;
   }
 
   return (
@@ -100,6 +119,9 @@ export default function EditApartment() {
         <NavBar />
         <main className="container mx-auto py-8 px-4">
           <Card className="w-full max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-blue-600">Editar Departamento</CardTitle>
+            </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2 pt-6">
@@ -110,11 +132,17 @@ export default function EditApartment() {
                   <div className="flex items-center justify-center w-full">
                     <label htmlFor="image" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                        <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
-                        <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
+                        {selectedImage ? (
+                          <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <Upload className="w-10 h-10 mb-3 text-gray-400" />
+                            <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
+                            <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
+                          </>
+                        )}
                       </div>
-                      <Input id="image" name="image" type="file" className="hidden" onChange={handleChange} />
+                      <Input id="image" name="image" type="file" className="hidden" onChange={handleImageChange} />
                     </label>
                   </div>
                 </div>
@@ -272,8 +300,7 @@ export default function EditApartment() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-
-                </form>
+              </form>
             </CardContent>
             <CardFooter className="flex justify-between">
               <AlertDialog>
@@ -303,5 +330,5 @@ export default function EditApartment() {
         </main>
       </div>
     </TooltipProvider>
-  )
+  );
 }

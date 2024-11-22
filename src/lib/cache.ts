@@ -247,6 +247,13 @@ class Cache {
     return this.data;
   }
 
+  public async getBYId(id: number): Promise<Apartment | undefined> {
+    if (!this.isLoaded) {
+      await this.initialize();
+    }
+    return this.data.find((item) => item.id === id) as Apartment;
+  }
+
   public async filterBy(criteria: Partial<Apartment>): Promise<Apartment[]> {
     if (!this.isLoaded) {
       await this.initialize();

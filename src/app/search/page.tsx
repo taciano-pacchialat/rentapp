@@ -17,7 +17,7 @@ import { SlidersHorizontal, Search, ChevronLeft, ChevronRight, Star } from 'luci
 import Image from "next/image"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import cache from '@/components/cache'
+import cache from '@/lib/cache'
 import DetailButton from '@/components/ui/detail-button'
 
 type Apartment = {
