@@ -1,4 +1,5 @@
 import { BASE_URL } from "@/config/config";
+import { Apartment } from "@/types/apartment";
 import axios from "axios";
 
 export type ApartmentResponse = {
@@ -28,6 +29,66 @@ export async function fetchApartments(): Promise<ApartmentResponse> {
       return {
         success: false,
         message: "Ocurrió un error inesperado.",
+      };
+    }
+  }
+}
+
+export async function updateApartment(
+  apartmentId: number,
+  data: Partial<Apartment>
+): Promise<ApartmentResponse> {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, data, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
+      },
+    });
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        errors: error.response.data.errors || {},
+        message: error.response.data.message || "Error al actualizar el departamento.",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error inesperado al actualizar.",
+      };
+    }
+  }
+}
+
+export async function deleteApartment(apartmentId: number): Promise<ApartmentResponse> {
+  const token = localStorage.getItem("token");
+  try {
+    await axios.delete(`${BASE_URL}/api/apartments/${apartmentId}/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+    return {
+      success: true,
+      message: "Departamento eliminado exitosamente.",
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        errors: error.response.data.errors || {},
+        message: error.response.data.message || "Error al eliminar el departamento.",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error inesperado al eliminar.",
       };
     }
   }
