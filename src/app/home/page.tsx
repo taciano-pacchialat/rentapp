@@ -18,8 +18,6 @@ import DetailButton from "@/components/ui/detail-button";
 import cache from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
 
-const cacheInstance = cache.getInstance();
-
 function ImageCarousel({ images, name }: { images: string[]; name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
@@ -102,6 +100,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function HomePage() {
   const [featuredApartments, setApartments] = useState<Apartment[]>([]);
+  const cacheInstance = cache.getInstance();
 
   useEffect(() => {
     async function fetchApartments() {
@@ -109,7 +108,7 @@ export default function HomePage() {
       setApartments(data);
     }
     fetchApartments();
-  }, []);
+  }, [cacheInstance]);
 
   return (
     <div className="min-h-screen bg-white">
