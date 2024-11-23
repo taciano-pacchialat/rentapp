@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/config/config";
 import { Apartment } from "@/types/apartment";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export type ApartmentResponse = {
   success: boolean;
@@ -10,7 +11,7 @@ export type ApartmentResponse = {
 };
 
 export async function fetchApartments(): Promise<ApartmentResponse> {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   try {
     const response = await axios.get(BASE_URL + "/api/apartments/", {
       headers: {
@@ -38,7 +39,7 @@ export async function updateApartment(
   apartmentId: number,
   data: Partial<Apartment>
 ): Promise<ApartmentResponse> {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   try {
     const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, data, {
       headers: {
@@ -67,7 +68,7 @@ export async function updateApartment(
 }
 
 export async function deleteApartment(apartmentId: number): Promise<ApartmentResponse> {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   try {
     await axios.delete(`${BASE_URL}/api/apartments/${apartmentId}/`, {
       headers: {
@@ -95,7 +96,7 @@ export async function deleteApartment(apartmentId: number): Promise<ApartmentRes
 }
 
 export async function addApartment(data: Partial<Apartment>): Promise<ApartmentResponse> {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   try {
     const response = await axios.post(`${BASE_URL}/api/apartments/`, data, {
       headers: {
