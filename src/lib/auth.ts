@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/config/config";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export type AuthResponse = {
   success: boolean;
@@ -23,7 +24,7 @@ export async function registerUser(data: {
       },
     });
     const token = response.data.token;
-    localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7, sameSite: "strict" });
 
     return { success: true, data: response.data };
   } catch (error) {
@@ -53,7 +54,7 @@ export async function loginUser(data: {
       },
     });
     const token = response.data.token;
-    localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7, sameSite: "strict" });
 
     return { success: true, data: response.data };
   } catch (error) {
