@@ -2,6 +2,7 @@
 
 import "@radix-ui/themes/styles.css";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,6 +52,8 @@ export default function AuthView() {
     phone: "",
   });
 
+  const router = useRouter();
+
   const handleLoginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
@@ -63,7 +66,9 @@ export default function AuthView() {
     const response = await loginUser(loginData);
 
     if (response.success) {
-      // TODO redirigir a home
+      const userId = (response.data as { user: { id: string } }).user.id;
+      localStorage.setItem("userId", userId);
+      router.push("/home");
     } else {
       setLoginError(response.message || "Error durante el inicio de sesión.");
     }
@@ -87,8 +92,9 @@ export default function AuthView() {
     const response = await registerUser(registrationData);
 
     if (response.success) {
-      // TODO redirigir a home
-      setActiveTab("login");
+      const userId = (response.data as { user: { id: string } }).user.id;
+      localStorage.setItem("userId", userId);
+      router.push("/home");
     } else {
       setRegisterErrors({
         name: response.errors?.name || "",
@@ -105,7 +111,6 @@ export default function AuthView() {
         }));
       }
     }
-
     setIsLoading(false);
   };
 
