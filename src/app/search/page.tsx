@@ -19,26 +19,7 @@ import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import cache from '@/lib/cache'
 import DetailButton from '@/components/ui/detail-button'
-
-type Apartment = {
-  id: number;
-  name: string;
-  price: number;
-  expenses: number;
-  owner: string;
-  description: string;
-  hasParking: boolean;
-  hasPets: boolean;
-  hasPool: boolean;
-  hasGym: boolean;
-  images: string[];
-  floor: number;
-  letter: string;
-  bathrooms: number;
-  rooms: number;
-  additionalInfo: string;
-  rating: number;
-}
+import { Apartment } from '@/types/apartment'
 
 let cacheInstance: cache = cache.getInstance();
 
@@ -400,10 +381,9 @@ export default function Component() {
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {filteredApartments.map((apartment) => (
               <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
-                <ImageCarousel images={apartment.images} name={apartment.name} />
+                <ImageCarousel images={apartment.images.map(image => image.image)} name={apartment.name} />
                 <CardHeader>
                   <CardTitle className="text-blue-600 truncate">{apartment.name}</CardTitle>
-                  <CardDescription className="truncate">Propietario: {apartment.owner}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>

@@ -1,4 +1,3 @@
-// pages/infoDepar/[id].tsx
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,6 +23,17 @@ import {
 import { Button } from "@/components/ui/button";
 import cache from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function DetallesDepartamentoPage() {
   const { id } = useParams();
@@ -81,6 +91,13 @@ export default function DetallesDepartamentoPage() {
       }
     }
     return stars;
+  };
+
+  const handleWhatsAppClick = () => {
+    if (apartment) {
+      const message = encodeURIComponent(`Hola, estoy interesado en alquilar el departamento ${apartment.name}`);
+      window.open(`https://wa.me/${apartment.ownerPhone}?text=${message}`, '_blank');
+    }
   };
 
   return (
@@ -200,11 +217,30 @@ export default function DetallesDepartamentoPage() {
               </div>
             </div>
           )}
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-            Solicitar Alquiler
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                Solicitar Alquiler
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Información del Propietario</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <p>Teléfono: {apartment.ownerPhone}</p>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleWhatsAppClick}>
+                  Enviar mensaje por WhatsApp
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </>
   );
 }
+

@@ -9,6 +9,7 @@ export type Apartment = {
   price: number;
   expenses: number;
   owner: number;
+  ownerPhone: string;
   description: string;
   hasParking: boolean;
   hasPets: boolean;
