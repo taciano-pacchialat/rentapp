@@ -136,7 +136,10 @@ export default function HomePage() {
                 key={apartment.id}
                 className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
               >
-                <ImageCarousel images={apartment.images} name={apartment.name} />
+                <ImageCarousel
+                  images={apartment.images.map((e) => e.image)}
+                  name={apartment.name}
+                />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">

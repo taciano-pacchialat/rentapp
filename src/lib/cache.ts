@@ -22,7 +22,7 @@ export class Cache {
   private async initialize(): Promise<void> {
     if (!this.isLoaded) {
       const apartmentsResponse = await this.fetchDataFromDatabase();
-      if (apartmentsResponse.success && apartmentsResponse.data) {
+      if (apartmentsResponse.success) {
         this.data = apartmentsResponse.data as Apartment[];
         this.isLoaded = true;
         console.log("Datos cargados desde la API.");

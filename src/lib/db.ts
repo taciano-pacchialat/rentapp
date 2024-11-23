@@ -18,7 +18,11 @@ export async function fetchApartments(): Promise<ApartmentResponse> {
         Authorization: `Token ${token}`,
       },
     });
-    return response.data;
+    return {
+      success: true,
+      data: response.data as Apartment[],
+      message: "Departamentos fetcheados correctamente",
+    };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       return {
