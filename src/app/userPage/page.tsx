@@ -25,16 +25,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import NavBar from "@/components/ui/NavBar";
-import userInf from "@/lib/userInfo";
+// import userInf from "@/lib/userInfo";
 import cache from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
+import UserInfo from "@/lib/userInfo";
 
 const cacheInstance = cache.getInstance();
-const userInfo = userInf.getInstance();
+// const userInfo = userInf.getInstance();
 
-const param: Partial<Apartment> = {
-  owner: userInfo.getUser()!,
-};
+// const param: Partial<Apartment> = {
+//   owner: userInfo.getUser()!,
+// };
 
 function ImageCarousel({ images, name }: { images: string[]; name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -117,6 +118,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function UserPage() {
   const router = useRouter();
+  const userInfo = UserInfo.getInstance();
 
   const handleAddProperty = () => {
     router.push("/agregarDepto");
@@ -130,11 +132,15 @@ export default function UserPage() {
 
   useEffect(() => {
     async function fetchApartments() {
-      const data = await cacheInstance.filterBy(param);
-      setApartments(data);
+      const allApartments = await cacheInstance.getAll();
+      const currentUser = userInfo.getUser();
+      if (currentUser) {
+        const filteredData = allApartments.filter((apt) => apt.owner.email === currentUser.email);
+        setApartments(filteredData);
+      }
     }
     fetchApartments();
-  }, []);
+  }, [userInfo]);
 
   const handleDeleteUser = () => {
     userInfo.clearUser();
