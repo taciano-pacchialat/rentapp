@@ -21,19 +21,20 @@ import {
 import NavBar from "@/components/ui/NavBar"
 import userInf from "@/lib/userInfo"
 import cache from "@/lib/cache"
+import { ApartmentImage } from "@/types/apartment"
 
 interface Apartment {
   id: number;
   name: string;
   price: number;
   expenses: number;
-  owner: string;
+  owner: number;
   description: string;
   hasParking: boolean;
   hasPets: boolean;
   hasPool: boolean;
   hasGym: boolean;
-  images: string[];
+  images: ApartmentImage[];
   floor: number;
   letter: string;
   bathrooms: number;
@@ -44,7 +45,7 @@ interface Apartment {
 
 const cacheInstance = cache.getInstance();
 const userInfo = userInf.getInstance();
-userInfo.setUsuario('John Doe');
+
  
 const param: Partial<Apartment> = {
   owner: userInfo.getUsuario()
@@ -152,7 +153,7 @@ export default function UserPage() {
   }, []);
 
   const handleDeleteUser = () => {
-    userInfo.setUsuario('');
+    userInfo.setUsuario(0);
     router.push('/login-register');
   }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
@@ -181,10 +182,9 @@ export default function UserPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userApartments.map((apartment) => (
               <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
-                <ImageCarousel images={apartment.images} name={apartment.name} />
+                <ImageCarousel images={apartment.images.map(image => image.image)} name={apartment.name} />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
-                  <CardDescription className="truncate">Propietario: {apartment.owner}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>

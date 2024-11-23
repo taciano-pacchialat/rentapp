@@ -22,11 +22,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ApartmentImage } from "@/types/apartment";
+import { Apartment } from "@/types/apartment";
 
 interface Departamento {
   id: string;
   nombre: string;
-  imagen: string;
+  imagen: ApartmentImage[];
   piso: number;
   letra: string;
   descripcion: string;
@@ -41,32 +43,13 @@ interface Departamento {
   tieneGimnasio: boolean;
 }
 
-type Apartment = {
-  id: number;
-  name: string;
-  price: number;
-  expenses: number;
-  owner: string;
-  description: string;
-  hasParking: boolean;
-  hasPets: boolean;
-  hasPool: boolean;
-  hasGym: boolean;
-  images: string[];
-  floor: number;
-  letter: string;
-  bathrooms: number;
-  rooms: number;
-  additionalInfo: string;
-  rating: number;
-}
 
 export default function AgregarDepartamento() {
   const router = useRouter();
   const [nuevoDepartamento, setNuevoDepartamento] = useState<Departamento>({
     id: '',
     nombre: '',
-    imagen: '',
+    imagen: [],
     piso: 0,
     letra: '',
     descripcion: '',
@@ -95,18 +78,19 @@ export default function AgregarDepartamento() {
     e.preventDefault();
     console.log('Nuevo departamento:', nuevoDepartamento);
     const apartments = await cache.getInstance().getAll();
-    const newApartment: Apartment = {
+    const newApartment: Partial<Apartment> = {
       id: apartments.length + 1,
       name: nuevoDepartamento.nombre,
       price: nuevoDepartamento.precio,
       expenses: nuevoDepartamento.expensas,
       owner: userInfo.getInstance().getUsuario(),
+      ownerPhone: userInfo.getInstance().getContacto(),
       description: nuevoDepartamento.descripcion,
       hasParking: nuevoDepartamento.tieneEstacionamiento,
       hasPets: nuevoDepartamento.permiteMascotas,
       hasPool: nuevoDepartamento.tienePiscina,
       hasGym: nuevoDepartamento.tieneGimnasio,
-      images: [nuevoDepartamento.imagen],
+      images: nuevoDepartamento.imagen,
       floor: nuevoDepartamento.piso,
       letter: nuevoDepartamento.letra,
       bathrooms: nuevoDepartamento.banos,
@@ -123,7 +107,7 @@ export default function AgregarDepartamento() {
     setNuevoDepartamento({
       id: '',
       nombre: '',
-      imagen: '',
+      imagen: [],
       piso: 0,
       letra: '',
       descripcion: '',

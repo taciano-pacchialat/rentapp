@@ -1,11 +1,11 @@
 class UserInfo {
     private static instance: UserInfo;
-    private _usuario: string;
-    private _contacto: number;
+    private _usuario: number;
+    private _contacto: string;
 
     private constructor() {
-        this._usuario = '';
-        this._contacto = 0;
+        this._usuario = 0;
+        this._contacto = '0';
     }
 
     public static getInstance(): UserInfo {
@@ -15,19 +15,19 @@ class UserInfo {
         return UserInfo.instance;
     }
 
-    public getUsuario(): string {
+    public getUsuario(): number {
         return this._usuario;
     }
 
-    public setUsuario(value: string) {
+    public setUsuario(value: number) {
         this._usuario = value;
     }
 
-    public getContacto(): number {
+    public getContacto(): string {
         return this._contacto;
     }
 
-    public set contacto(value: number) {
+    public set contacto(value: string) {
         this._contacto = value;
     }
 }
