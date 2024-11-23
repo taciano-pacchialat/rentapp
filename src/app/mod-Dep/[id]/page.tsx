@@ -1,23 +1,36 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import NavBar from '@/components/ui/NavBar'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell, Trash2 } from 'lucide-react'
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter, useParams } from "next/navigation";
+import NavBar from "@/components/ui/NavBar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Home,
+  Bath,
+  DollarSign,
+  Info,
+  Upload,
+  Building,
+  Car,
+  Cat,
+  Waves,
+  Dumbbell,
+  Trash2,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,26 +41,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import cache from "@/lib/cache"
-
-interface Apartment {
-  id: number;
-  name: string;
-  images: string[];
-  floor: number;
-  letter: string;
-  description: string;
-  bathrooms: number;
-  rooms: number;
-  additionalInfo: string;
-  price: number;
-  expenses: number;
-  hasParking: boolean;
-  hasPets: boolean;
-  hasPool: boolean;
-  hasGym: boolean;
-}
+} from "@/components/ui/alert-dialog";
+import cache from "@/lib/cache";
+import { Apartment } from "@/types/apartment";
 
 export default function EditApartmentPage() {
   const router = useRouter();
@@ -58,7 +54,7 @@ export default function EditApartmentPage() {
   useEffect(() => {
     if (id) {
       const fetchApartment = async () => {
-        const apartmentData = await cache.getInstance().getBYId(Number(id));
+        const apartmentData = await cache.getInstance().getById(Number(id));
         if (apartmentData) {
           setApartment(apartmentData);
         }
@@ -69,15 +65,15 @@ export default function EditApartmentPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setApartment(prev => prev ? { ...prev, [name]: value } : null);
+    setApartment((prev) => (prev ? { ...prev, [name]: value } : null));
   };
 
   const handleCheckboxChange = (name: string) => (checked: boolean) => {
-    setApartment(prev => prev ? { ...prev, [name]: checked } : null);
+    setApartment((prev) => (prev ? { ...prev, [name]: checked } : null));
   };
 
   const handleSelectChange = (name: string) => (value: string) => {
-    setApartment(prev => prev ? { ...prev, [name]: parseInt(value) } : null);
+    setApartment((prev) => (prev ? { ...prev, [name]: parseInt(value) } : null));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +82,7 @@ export default function EditApartmentPage() {
       const reader = new FileReader();
       reader.onload = () => {
         setSelectedImage(reader.result as string);
-        setApartment(prev => prev ? { ...prev, image: reader.result as string } : null);
+        setApartment((prev) => (prev ? { ...prev, image: reader.result as string } : null));
       };
       reader.readAsDataURL(file);
     }
@@ -96,16 +92,16 @@ export default function EditApartmentPage() {
     e.preventDefault();
     if (apartment) {
       cache.getInstance().updateData(apartment.id, apartment);
-      console.log('Apartment updated:', apartment);
-      router.push('/userPage'); // Redirige a la página principal después de guardar
+      console.log("Apartment updated:", apartment);
+      router.push("/userPage"); // Redirige a la página principal después de guardar
     }
   };
 
   const handleDelete = () => {
     if (apartment) {
       cache.getInstance().removeData(apartment.id);
-      console.log('Apartment deleted:', apartment.id);
-      router.push('/userPage'); // Redirige a la página principal después de eliminar
+      console.log("Apartment deleted:", apartment.id);
+      router.push("/userPage"); // Redirige a la página principal después de eliminar
     }
   };
 
@@ -120,7 +116,9 @@ export default function EditApartmentPage() {
         <main className="container mx-auto py-8 px-4">
           <Card className="w-full max-w-2xl mx-auto">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-blue-600">Editar Departamento</CardTitle>
+              <CardTitle className="text-2xl font-bold text-blue-600">
+                Editar Departamento
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,19 +128,35 @@ export default function EditApartmentPage() {
                     <span>Imagen del Departamento</span>
                   </Label>
                   <div className="flex items-center justify-center w-full">
-                    <label htmlFor="image" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <label
+                      htmlFor="image"
+                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         {selectedImage ? (
-                          <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
+                          <Image
+                            src={selectedImage}
+                            alt="Selected"
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <>
                             <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                            <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
+                            <p className="mb-2 text-sm text-gray-500">
+                              <span className="font-semibold">Haz clic para subir</span> o arrastra
+                              y suelta
+                            </p>
                             <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
                           </>
                         )}
                       </div>
-                      <Input id="image" name="image" type="file" className="hidden" onChange={handleImageChange} />
+                      <Input
+                        id="image"
+                        name="image"
+                        type="file"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
                     </label>
                   </div>
                 </div>
@@ -161,14 +175,25 @@ export default function EditApartmentPage() {
                       <Building size={18} />
                       <span>Piso</span>
                     </Label>
-                    <Input id="floor" name="floor" type="number" onChange={handleChange} value={apartment.floor} />
+                    <Input
+                      id="floor"
+                      name="floor"
+                      type="number"
+                      onChange={handleChange}
+                      value={apartment.floor}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="letter" className="flex items-center space-x-2">
                       <Home size={18} />
                       <span>Letra</span>
                     </Label>
-                    <Input id="letter" name="letter" onChange={handleChange} value={apartment.letter} />
+                    <Input
+                      id="letter"
+                      name="letter"
+                      onChange={handleChange}
+                      value={apartment.letter}
+                    />
                   </div>
                 </div>
 
@@ -177,7 +202,13 @@ export default function EditApartmentPage() {
                     <Info size={18} />
                     <span>Descripción</span>
                   </Label>
-                  <Textarea id="description" name="description" onChange={handleChange} value={apartment.description} className="min-h-[100px]" />
+                  <Textarea
+                    id="description"
+                    name="description"
+                    onChange={handleChange}
+                    value={apartment.description}
+                    className="min-h-[100px]"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -186,7 +217,10 @@ export default function EditApartmentPage() {
                       <Bath size={18} />
                       <span>Número de Baños</span>
                     </Label>
-                    <Select value={apartment.bathrooms.toString()} onValueChange={handleSelectChange('bathrooms')}>
+                    <Select
+                      value={apartment.bathrooms.toString()}
+                      onValueChange={handleSelectChange("bathrooms")}
+                    >
                       <SelectTrigger id="bathrooms">
                         <SelectValue placeholder="Selecciona" />
                       </SelectTrigger>
@@ -203,7 +237,10 @@ export default function EditApartmentPage() {
                       <Home size={18} />
                       <span>Número de Habitaciones</span>
                     </Label>
-                    <Select value={apartment.rooms.toString()} onValueChange={handleSelectChange('rooms')}>
+                    <Select
+                      value={apartment.rooms.toString()}
+                      onValueChange={handleSelectChange("rooms")}
+                    >
                       <SelectTrigger id="rooms">
                         <SelectValue placeholder="Selecciona" />
                       </SelectTrigger>
@@ -223,14 +260,26 @@ export default function EditApartmentPage() {
                       <DollarSign size={18} />
                       <span>Precio de Alquiler</span>
                     </Label>
-                    <Input id="price" name="price" type="number" onChange={handleChange} value={apartment.price} />
+                    <Input
+                      id="price"
+                      name="price"
+                      type="number"
+                      onChange={handleChange}
+                      value={apartment.price}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="expenses" className="flex items-center space-x-2">
                       <DollarSign size={18} />
                       <span>Expensas</span>
                     </Label>
-                    <Input id="expenses" name="expenses" type="number" onChange={handleChange} value={apartment.expenses} />
+                    <Input
+                      id="expenses"
+                      name="expenses"
+                      type="number"
+                      onChange={handleChange}
+                      value={apartment.expenses}
+                    />
                   </div>
                 </div>
 
@@ -239,15 +288,28 @@ export default function EditApartmentPage() {
                     <Info size={18} />
                     <span>Información Adicional</span>
                   </Label>
-                  <Textarea id="additionalInfo" name="additionalInfo" onChange={handleChange} value={apartment.additionalInfo} className="min-h-[100px]" />
+                  <Textarea
+                    id="additionalInfo"
+                    name="additionalInfo"
+                    onChange={handleChange}
+                    value={apartment.additionalInfo}
+                    className="min-h-[100px]"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center space-x-2">
-                        <Checkbox id="hasParking" onCheckedChange={handleCheckboxChange('hasParking')} checked={apartment.hasParking} />
-                        <Label htmlFor="hasParking" className="flex items-center space-x-2 cursor-pointer">
+                        <Checkbox
+                          id="hasParking"
+                          onCheckedChange={handleCheckboxChange("hasParking")}
+                          checked={apartment.hasParking}
+                        />
+                        <Label
+                          htmlFor="hasParking"
+                          className="flex items-center space-x-2 cursor-pointer"
+                        >
                           <Car size={18} />
                           <span>Estacionamiento</span>
                         </Label>
@@ -260,8 +322,15 @@ export default function EditApartmentPage() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center space-x-2">
-                        <Checkbox id="hasPets" onCheckedChange={handleCheckboxChange('hasPets')} checked={apartment.hasPets} />
-                        <Label htmlFor="hasPets" className="flex items-center space-x-2 cursor-pointer">
+                        <Checkbox
+                          id="hasPets"
+                          onCheckedChange={handleCheckboxChange("hasPets")}
+                          checked={apartment.hasPets}
+                        />
+                        <Label
+                          htmlFor="hasPets"
+                          className="flex items-center space-x-2 cursor-pointer"
+                        >
                           <Cat size={18} />
                           <span>Permite Mascotas</span>
                         </Label>
@@ -274,8 +343,15 @@ export default function EditApartmentPage() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center space-x-2">
-                        <Checkbox id="hasPool" onCheckedChange={handleCheckboxChange('hasPool')} checked={apartment.hasPool} />
-                        <Label htmlFor="hasPool" className="flex items-center space-x-2 cursor-pointer">
+                        <Checkbox
+                          id="hasPool"
+                          onCheckedChange={handleCheckboxChange("hasPool")}
+                          checked={apartment.hasPool}
+                        />
+                        <Label
+                          htmlFor="hasPool"
+                          className="flex items-center space-x-2 cursor-pointer"
+                        >
                           <Waves size={18} />
                           <span>Piscina</span>
                         </Label>
@@ -288,8 +364,15 @@ export default function EditApartmentPage() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="flex items-center space-x-2">
-                        <Checkbox id="hasGym" onCheckedChange={handleCheckboxChange('hasGym')} checked={apartment.hasGym} />
-                        <Label htmlFor="hasGym" className="flex items-center space-x-2 cursor-pointer">
+                        <Checkbox
+                          id="hasGym"
+                          onCheckedChange={handleCheckboxChange("hasGym")}
+                          checked={apartment.hasGym}
+                        />
+                        <Label
+                          htmlFor="hasGym"
+                          className="flex items-center space-x-2 cursor-pointer"
+                        >
                           <Dumbbell size={18} />
                           <span>Gimnasio</span>
                         </Label>
@@ -314,8 +397,8 @@ export default function EditApartmentPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Esta acción no se puede deshacer. Esto eliminará permanentemente el departamento
-                      y removerá los datos de nuestros servidores.
+                      Esta acción no se puede deshacer. Esto eliminará permanentemente el
+                      departamento y removerá los datos de nuestros servidores.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -324,7 +407,13 @@ export default function EditApartmentPage() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit" onClick={handleSubmit} className="bg-blue-600 hover:bg-blue-700 text-white">Guardar Cambios</Button>
+              <Button
+                type="submit"
+                onClick={handleSubmit}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Guardar Cambios
+              </Button>
             </CardFooter>
           </Card>
         </main>

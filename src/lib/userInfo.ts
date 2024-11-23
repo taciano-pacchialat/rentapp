@@ -1,35 +1,31 @@
+import { User } from "@/types/user";
+
 class UserInfo {
-    private static instance: UserInfo;
-    private _usuario: string;
-    private _contacto: number;
+  private static instance: UserInfo;
+  private _user: User | null;
 
-    private constructor() {
-        this._usuario = '';
-        this._contacto = 0;
-    }
+  private constructor() {
+    this._user = null;
+  }
 
-    public static getInstance(): UserInfo {
-        if (!UserInfo.instance) {
-            UserInfo.instance = new UserInfo();
-        }
-        return UserInfo.instance;
+  public static getInstance(): UserInfo {
+    if (!UserInfo.instance) {
+      UserInfo.instance = new UserInfo();
     }
+    return UserInfo.instance;
+  }
 
-    public getUsuario(): string {
-        return this._usuario;
-    }
+  public getUser(): User | null {
+    return this._user;
+  }
 
-    public setUsuario(value: string) {
-        this._usuario = value;
-    }
+  public setUser(user: User) {
+    this._user = user;
+  }
 
-    public getContacto(): number {
-        return this._contacto;
-    }
-
-    public set contacto(value: number) {
-        this._contacto = value;
-    }
+  public clearUser() {
+    this._user = null;
+  }
 }
 
 export default UserInfo;

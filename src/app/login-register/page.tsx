@@ -25,6 +25,7 @@ import {
   validatePassword,
   validatePhone,
 } from "@/lib/utils";
+import UserInfo from "@/lib/userInfo";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +67,13 @@ export default function AuthView() {
     const response = await loginUser(loginData);
 
     if (response.success) {
+      const userInfo = UserInfo.getInstance();
+      userInfo.setUser({
+        email: registerEmail,
+        phone_number: registerPhone,
+        name: registerName,
+      });
+
       router.push("/home");
     } else {
       setLoginError(response.message || "Error durante el inicio de sesión.");
@@ -90,6 +98,8 @@ export default function AuthView() {
     const response = await registerUser(registrationData);
 
     if (response.success) {
+      const userInfo = UserInfo.getInstance();
+      userInfo.setUser({ email: registerEmail, phone_number: registerPhone, name: registerName });
       router.push("/home");
     } else {
       setRegisterErrors({

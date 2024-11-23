@@ -1,9 +1,18 @@
 import { BASE_URL } from "@/config/config";
 import { Apartment } from "@/types/apartment";
+import { User } from "@/types/user";
 import axios from "axios";
 import Cookies from "js-cookie";
+import Cache from "./cache";
 
 export type ApartmentResponse = {
+  success: boolean;
+  data?: unknown;
+  errors?: { [key: string]: string };
+  message?: string;
+};
+
+export type UserResponse = {
   success: boolean;
   data?: unknown;
   errors?: { [key: string]: string };
@@ -127,3 +136,34 @@ export async function addApartment(data: Partial<Apartment>): Promise<ApartmentR
     }
   }
 }
+
+export const getApartmentOwner = async (apartmentId: number): Promise<UserResponse> => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("Authentication token not found.");
+    }
+
+    const apartment = await Cache.getInstance().getById(apartmentId);
+    if (!apartment) {
+      throw new Error(`Apartment with ID ${apartmentId} not found.`);
+    }
+
+    const ownerId = apartment?.owner;
+    const ownerResponse = await axios.get<User>(`${BASE_URL}/api/auth/users/${ownerId}/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    return {
+      success: true,
+      data: ownerResponse.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      errors: { error: error instanceof Error ? error.message : String(error) },
+    };
+  }
+};

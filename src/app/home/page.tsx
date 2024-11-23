@@ -143,7 +143,7 @@ export default function HomePage() {
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">
-                    Propietario: {apartment.owner}
+                    Propietario: {apartment.owner.name}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">

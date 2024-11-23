@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export type ApartmentImage = {
   id: number;
   image: string;
@@ -8,7 +10,7 @@ export type Apartment = {
   name: string;
   price: number;
   expenses: number;
-  owner: number;
+  owner: User;
   description: string;
   hasParking: boolean;
   hasPets: boolean;

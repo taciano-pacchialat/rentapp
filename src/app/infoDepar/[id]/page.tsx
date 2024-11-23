@@ -142,7 +142,7 @@ export default function DetallesDepartamentoPage() {
             </div>
             <div className="flex items-center">
               <User className="mr-2 text-blue-600" />
-              <span>Propietario: {apartment.owner}</span>
+              <span>Propietario: {apartment.owner.name}</span>
             </div>
           </div>
           <div className="mb-6">

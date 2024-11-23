@@ -1,12 +1,18 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { PlusCircle, Edit, ChevronLeft, ChevronRight, Star, Trash2 } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { PlusCircle, Edit, ChevronLeft, ChevronRight, Star, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,48 +23,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import NavBar from "@/components/ui/NavBar"
-import userInf from "@/lib/userInfo"
-import cache from "@/lib/cache"
-
-interface Apartment {
-  id: number;
-  name: string;
-  price: number;
-  expenses: number;
-  owner: string;
-  description: string;
-  hasParking: boolean;
-  hasPets: boolean;
-  hasPool: boolean;
-  hasGym: boolean;
-  images: string[];
-  floor: number;
-  letter: string;
-  bathrooms: number;
-  rooms: number;
-  additionalInfo: string;
-  rating: number;
-}
+} from "@/components/ui/alert-dialog";
+import NavBar from "@/components/ui/NavBar";
+import userInf from "@/lib/userInfo";
+import cache from "@/lib/cache";
+import { Apartment } from "@/types/apartment";
 
 const cacheInstance = cache.getInstance();
 const userInfo = userInf.getInstance();
-userInfo.setUsuario('John Doe');
- 
-const param: Partial<Apartment> = {
-  owner: userInfo.getUsuario()
-}
 
-function ImageCarousel({ images, name }: { images: string[], name: string }) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
+const param: Partial<Apartment> = {
+  owner: userInfo.getUser()!,
+};
+
+function ImageCarousel({ images, name }: { images: string[]; name: string }) {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
-  }
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
-  }
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
 
   return (
     <div className="relative w-full pt-[56.25%]">
@@ -102,7 +88,7 @@ function ImageCarousel({ images, name }: { images: string[], name: string }) {
         </>
       )}
     </div>
-  )
+  );
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -112,11 +98,11 @@ function StarRating({ rating }: { rating: number }) {
         <div key={star} className="relative">
           <Star
             className={`h-5 w-5 ${
-              star <= Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              star <= Math.floor(rating) ? "text-yellow-400 fill-current" : "text-gray-300"
             }`}
           />
           {star > Math.floor(rating) && star <= Math.ceil(rating) && (
-            <div 
+            <div
               className="absolute top-0 left-0 overflow-hidden text-yellow-400 fill-current"
               style={{ width: `${(rating % 1) * 100}%` }}
             >
@@ -126,20 +112,19 @@ function StarRating({ rating }: { rating: number }) {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default function UserPage() {
-  const router = useRouter()
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const router = useRouter();
 
   const handleAddProperty = () => {
-    router.push('/agregarDepto')
-  }
+    router.push("/agregarDepto");
+  };
 
   const handleEditProperty = (id: number) => {
-    router.push(`/mod-Dep/${id}`)
-  }
+    router.push(`/mod-Dep/${id}`);
+  };
 
   const [userApartments, setApartments] = useState<Apartment[]>([]);
 
@@ -152,10 +137,10 @@ export default function UserPage() {
   }, []);
 
   const handleDeleteUser = () => {
-    userInfo.setUsuario('');
-    router.push('/login-register');
-  }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    userInfo.clearUser();
+    router.push("/login-register");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
@@ -180,30 +165,43 @@ export default function UserPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {userApartments.map((apartment) => (
-              <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
-                <ImageCarousel images={apartment.images} name={apartment.name} />
+              <Card
+                key={apartment.id}
+                className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
+              >
+                <ImageCarousel
+                  images={apartment.images.map((e) => e.image)}
+                  name={apartment.name}
+                />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
-                  <CardDescription className="truncate">Propietario: {apartment.owner}</CardDescription>
+                  <CardDescription className="truncate">
+                    Propietario: {apartment.owner.name}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
-                  <p className="text-sm text-gray-500 mt-2">Piso: {apartment.floor}, Letra: {apartment.letter}</p>
-                  <p className="text-sm text-gray-500">Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Piso: {apartment.floor}, Letra: {apartment.letter}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}
+                  </p>
                   <div className="mt-2">
                     <StarRating rating={apartment.rating} />
                   </div>
                 </CardContent>
                 <CardFooter className="mt-auto flex justify-between items-center">
-                  <p className="text-lg font-bold">
-                    ${apartment.price.toLocaleString()}/mes
-                  </p>
+                  <p className="text-lg font-bold">${apartment.price.toLocaleString()}/mes</p>
                   <p className="text-sm text-gray-500">
                     Expensas: ${apartment.expenses.toLocaleString()}
                   </p>
                 </CardFooter>
                 <CardFooter>
-                  <Button onClick={() => handleEditProperty(apartment.id)} className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button
+                    onClick={() => handleEditProperty(apartment.id)}
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
                     <Edit className="mr-2 h-4 w-4" />
                     Modificar Propiedad
                   </Button>
@@ -224,12 +222,16 @@ export default function UserPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirmar eliminación de usuario</AlertDialogTitle>
                 <AlertDialogDescription>
-                  ¿Estás seguro de que deseas eliminar tu cuenta de usuario? Esta acción no se puede deshacer.
+                  ¿Estás seguro de que deseas eliminar tu cuenta de usuario? Esta acción no se puede
+                  deshacer.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteUser} className="bg-red-600 hover:bg-red-700">
+                <AlertDialogAction
+                  onClick={handleDeleteUser}
+                  className="bg-red-600 hover:bg-red-700"
+                >
                   Eliminar
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -238,6 +240,5 @@ export default function UserPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
-
