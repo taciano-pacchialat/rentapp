@@ -23,6 +23,7 @@ import {
   Waves,
   Dumbbell,
   Trash2,
+  MapPin,
 } from "lucide-react";
 import {
   Select,
@@ -167,6 +168,20 @@ export default function EditApartmentPage() {
                     <span>Nombre del Departamento</span>
                   </Label>
                   <Input id="name" name="name" onChange={handleChange} value={apartment.name} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="street_address" className="flex items-center space-x-2">
+                    <MapPin size={18} />
+                    <span>Dirección del Departamento</span>
+                  </Label>
+                  <Input
+                    id="street_address"
+                    name="street_address"
+                    onChange={handleChange}
+                    value={apartment.street_address}
+                    placeholder="Ingrese la dirección del departamento"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

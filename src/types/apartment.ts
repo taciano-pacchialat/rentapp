@@ -22,5 +22,6 @@ export type Apartment = {
   letter: string;
   bathrooms: number;
   rooms: number;
+  street_address: string;
   additionalInfo: string;
 };

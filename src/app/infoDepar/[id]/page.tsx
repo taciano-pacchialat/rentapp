@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Star,
   User,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import cache from "@/lib/cache";
@@ -125,6 +126,13 @@ export default function DetallesDepartamentoPage() {
               <ChevronRight className="w-6 h-6" />
             </button>
           </div>
+
+          <div className="flex items-center mb-2">
+            <MapPin className="mr-2 text-blue-600" />
+            <span className="font-semibold">Dirección:</span>
+            <span className="ml-1">{apartment.street_address}</span>
+          </div>
+
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="flex items-center">
               <Home className="mr-2 text-blue-600" />

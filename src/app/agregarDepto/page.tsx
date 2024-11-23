@@ -20,6 +20,7 @@ import {
   Cat,
   Waves,
   Dumbbell,
+  MapPin,
 } from "lucide-react";
 import NavBar from "@/components/ui/NavBar";
 import cache from "@/lib/cache";
@@ -55,6 +56,7 @@ export default function AgregarDepartamento() {
     bathrooms: 0,
     rooms: 0,
     additionalInfo: "",
+    street_address: "",
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -88,6 +90,7 @@ export default function AgregarDepartamento() {
       bathrooms: nuevoDepartamento.bathrooms,
       rooms: nuevoDepartamento.rooms,
       additionalInfo: nuevoDepartamento.additionalInfo,
+      street_address: nuevoDepartamento.street_address,
       // rating hardcodeado
       rating: Math.floor(Math.random() * 5) + 1,
     };
@@ -115,6 +118,7 @@ export default function AgregarDepartamento() {
       bathrooms: 0,
       rooms: 0,
       additionalInfo: "",
+      street_address: "",
     });
     router.push("/userPage");
   };
@@ -127,13 +131,13 @@ export default function AgregarDepartamento() {
           <CardContent className="p-6">
             <form onSubmit={manejarEnvio} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="nombre" className="flex items-center space-x-2">
+                <Label htmlFor="name" className="flex items-center space-x-2">
                   <Home size={18} />
                   <span>Nombre del Departamento</span>
                 </Label>
                 <Input
-                  id="nombre"
-                  name="nombre"
+                  id="name"
+                  name="name"
                   onChange={manejarCambioInput}
                   value={nuevoDepartamento.name}
                   placeholder="Ingrese el nombre del departamento"
@@ -141,13 +145,28 @@ export default function AgregarDepartamento() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imagen" className="flex items-center space-x-2">
+                <Label htmlFor="street_address" className="flex items-center space-x-2">
+                  <MapPin size={18} />
+                  <span>Dirección</span>
+                </Label>
+                <Input
+                  id="street_address"
+                  name="street_address"
+                  onChange={manejarCambioInput}
+                  value={nuevoDepartamento.street_address}
+                  placeholder="Ingrese la dirección del departamento"
+                  maxLength={255}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="image" className="flex items-center space-x-2">
                   <Upload size={18} />
                   <span>Imagen del Departamento</span>
                 </Label>
                 <div className="flex items-center justify-center w-full">
                   <label
-                    htmlFor="imagen"
+                    htmlFor="image"
                     className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -159,8 +178,8 @@ export default function AgregarDepartamento() {
                       <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
                     </div>
                     <Input
-                      id="imagen"
-                      name="imagen"
+                      id="image"
+                      name="image"
                       type="file"
                       className="hidden"
                       onChange={manejarCambioInput}
@@ -170,26 +189,26 @@ export default function AgregarDepartamento() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="piso" className="flex items-center space-x-2">
+                  <Label htmlFor="floor" className="flex items-center space-x-2">
                     <Building size={18} />
                     <span>Piso</span>
                   </Label>
                   <Input
-                    id="piso"
-                    name="piso"
+                    id="floor"
+                    name="floor"
                     type="number"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.floor}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="letra" className="flex items-center space-x-2">
+                  <Label htmlFor="letter" className="flex items-center space-x-2">
                     <Home size={18} />
                     <span>Letra</span>
                   </Label>
                   <Input
-                    id="letra"
-                    name="letra"
+                    id="letter"
+                    name="letter"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.letter}
                   />
@@ -197,13 +216,13 @@ export default function AgregarDepartamento() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descripcion" className="flex items-center space-x-2">
+                <Label htmlFor="description" className="flex items-center space-x-2">
                   <Info size={18} />
                   <span>Descripción</span>
                 </Label>
                 <Textarea
-                  id="descripcion"
-                  name="descripcion"
+                  id="description"
+                  name="description"
                   onChange={manejarCambioInput}
                   value={nuevoDepartamento.description}
                   className="min-h-[100px]"
@@ -212,26 +231,26 @@ export default function AgregarDepartamento() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="banos" className="flex items-center space-x-2">
+                  <Label htmlFor="bathrooms" className="flex items-center space-x-2">
                     <Bath size={18} />
                     <span>Número de Baños</span>
                   </Label>
                   <Input
-                    id="banos"
-                    name="banos"
+                    id="bathrooms"
+                    name="bathrooms"
                     type="number"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.bathrooms}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ambientes" className="flex items-center space-x-2">
+                  <Label htmlFor="rooms" className="flex items-center space-x-2">
                     <Home size={18} />
                     <span>Número de Ambientes</span>
                   </Label>
                   <Input
-                    id="ambientes"
-                    name="ambientes"
+                    id="rooms"
+                    name="rooms"
                     type="number"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.rooms}
@@ -241,26 +260,26 @@ export default function AgregarDepartamento() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="precio" className="flex items-center space-x-2">
+                  <Label htmlFor="price" className="flex items-center space-x-2">
                     <DollarSign size={18} />
                     <span>Precio de Alquiler</span>
                   </Label>
                   <Input
-                    id="precio"
-                    name="precio"
+                    id="price"
+                    name="price"
                     type="number"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.price}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="expensas" className="flex items-center space-x-2">
+                  <Label htmlFor="expenses" className="flex items-center space-x-2">
                     <DollarSign size={18} />
                     <span>Expensas</span>
                   </Label>
                   <Input
-                    id="expensas"
-                    name="expensas"
+                    id="expenses"
+                    name="expenses"
                     type="number"
                     onChange={manejarCambioInput}
                     value={nuevoDepartamento.expenses}
@@ -269,13 +288,13 @@ export default function AgregarDepartamento() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="informacionAdicional" className="flex items-center space-x-2">
+                <Label htmlFor="additionalInfo" className="flex items-center space-x-2">
                   <Info size={18} />
                   <span>Información Adicional</span>
                 </Label>
                 <Textarea
-                  id="informacionAdicional"
-                  name="informacionAdicional"
+                  id="additionalInfo"
+                  name="additionalInfo"
                   onChange={manejarCambioInput}
                   value={nuevoDepartamento.additionalInfo}
                   className="min-h-[100px]"
