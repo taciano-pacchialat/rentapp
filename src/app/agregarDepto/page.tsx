@@ -6,13 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/text-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell } from 'lucide-react';
+import { Home, Bath, DollarSign, Info, Upload, Building, Car, Cat, Waves, Dumbbell, Type } from 'lucide-react';
 import NavBar from "@/components/ui/NavBar";
 
 interface Departamento {
   id: string;
+  titulo: string;
   imagen: string;
   piso: number;
   letra: string;
@@ -31,6 +32,7 @@ interface Departamento {
 export default function AgregarDepartamento() {
   const [nuevoDepartamento, setNuevoDepartamento] = useState<Departamento>({
     id: '',
+    titulo: '',
     imagen: '',
     piso: 0,
     letra: '',
@@ -46,6 +48,9 @@ export default function AgregarDepartamento() {
     tieneGimnasio: false
   });
 
+  const [exito, setExito] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNuevoDepartamento(prev => ({ ...prev, [name]: value }));
@@ -59,8 +64,11 @@ export default function AgregarDepartamento() {
     e.preventDefault();
     console.log('Nuevo departamento:', nuevoDepartamento);
     // Aquí iría la lógica para guardar el departamento en la base de datos
+    setMostrarConfirmacion(true);
+    setTimeout(() => setMostrarConfirmacion(false), 3000); // Ocultar el mensaje después de 3 segundos
     setNuevoDepartamento({
       id: '',
+      titulo: '',
       imagen: '',
       piso: 0,
       letra: '',
@@ -83,7 +91,35 @@ export default function AgregarDepartamento() {
       <div className="container mx-auto py-8 px-4">
         <Card className="w-full max-w-2xl mx-auto">
           <CardContent className="p-6">
+            {mostrarConfirmacion && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg">
+                  <div className="text-green-600 font-bold text-xl mb-2">¡Éxito!</div>
+                  <p>El departamento ha sido agregado correctamente.</p>
+                </div>
+              </div>
+            )}
+            {/* {exito && (
+              <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <strong className="font-bold">¡Éxito!</strong>
+                <span className="block sm:inline"> El departamento ha sido agregado correctamente.</span>
+              </div>
+            )} */}
             <form onSubmit={manejarEnvio} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="titulo" className="flex items-center space-x-2">
+                  <Type size={18} />
+                  <span>Título de la Publicación</span>
+                </Label>
+                <Input 
+                  id="titulo" 
+                  name="titulo" 
+                  onChange={manejarCambioInput} 
+                  value={nuevoDepartamento.titulo} 
+                  required 
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="imagen" className="flex items-center space-x-2">
                   <Upload size={18} />
@@ -106,14 +142,27 @@ export default function AgregarDepartamento() {
                     <Building size={18} />
                     <span>Piso</span>
                   </Label>
-                  <Input id="piso" name="piso" type="number" onChange={manejarCambioInput} value={nuevoDepartamento.piso} />
+                  <Input 
+                    id="piso" 
+                    name="piso" 
+                    type="number" 
+                    onChange={manejarCambioInput} 
+                    value={nuevoDepartamento.piso} 
+                    required 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="letra" className="flex items-center space-x-2">
                     <Home size={18} />
                     <span>Letra</span>
                   </Label>
-                  <Input id="letra" name="letra" onChange={manejarCambioInput} value={nuevoDepartamento.letra} />
+                  <Input 
+                    id="letra" 
+                    name="letra" 
+                    onChange={manejarCambioInput} 
+                    value={nuevoDepartamento.letra} 
+                    required 
+                  />
                 </div>
               </div>
 
@@ -232,7 +281,16 @@ export default function AgregarDepartamento() {
             </form>
           </CardContent>
         </Card>
+        {mostrarConfirmacion && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="text-green-600 font-bold text-xl mb-2">¡Éxito!</div>
+              <p>El departamento ha sido agregado correctamente.</p>
+            </div>
+          </div>
+        )}
       </div>
     </TooltipProvider>
   );
 }
+
