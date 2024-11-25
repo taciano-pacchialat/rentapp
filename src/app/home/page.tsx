@@ -16,9 +16,9 @@ import {
 import NavBar from "@/components/ui/NavBar";
 import DetailButton from "@/components/ui/detail-button";
 import cache from "@/lib/cache";
-import { Apartment } from "@/types/apartment";
+import { Apartment, ApartmentImage } from "@/types/apartment";
 
-function ImageCarousel({ images, name }: { images: string[]; name: string }) {
+function ImageCarousel({ images, name }: { images: ApartmentImage[]; name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   const nextImage = () => {
@@ -29,10 +29,10 @@ function ImageCarousel({ images, name }: { images: string[]; name: string }) {
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
-  return (
+ return (
     <div className="relative w-full pt-[56.25%]">
       <Image
-        src={images[currentImageIndex]}
+        src={images[currentImageIndex].image}
         alt={`Imagen ${currentImageIndex + 1} de ${name}`}
         fill
         className="object-cover"
@@ -104,8 +104,8 @@ export default function HomePage() {
 
   useEffect(() => {
     async function fetchApartments() {
-      const data = await cacheInstance.filterByRating(4);
-      setApartments(data);
+      const apartments = await cacheInstance.getAll();
+      setApartments(apartments);
     }
     fetchApartments();
   }, [cacheInstance]);
@@ -136,10 +136,7 @@ export default function HomePage() {
                 key={apartment.id}
                 className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
               >
-                <ImageCarousel
-                  images={apartment.images.map((e) => e.image)}
-                  name={apartment.name}
-                />
+                <ImageCarousel images={apartment.images} name={apartment.name} />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">
