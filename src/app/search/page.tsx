@@ -36,70 +36,6 @@ import { Apartment } from "@/types/apartment";
 
 const cacheInstance: cache = cache.getInstance();
 
-function ImageCarousel({ images, name }: { images: string[]; name: string }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
-
-  if (!isMounted) {
-    return null;
-  }
-
-  return (
-    <div className="relative w-full pt-[56.25%]">
-      <Image
-        src={images[currentImageIndex]}
-        alt={`Imagen ${currentImageIndex + 1} de ${name}`}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
-      {images.length > 1 && (
-        <>
-          {currentImageIndex > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1"
-              onClick={(e) => {
-                e.preventDefault();
-                prevImage();
-              }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="sr-only">Imagen anterior</span>
-            </Button>
-          )}
-          {currentImageIndex < images.length - 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white rounded-full p-1"
-              onClick={(e) => {
-                e.preventDefault();
-                nextImage();
-              }}
-            >
-              <ChevronRight className="h-6 w-6" />
-              <span className="sr-only">Siguiente imagen</span>
-            </Button>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -417,10 +353,6 @@ export default function Component() {
                 key={apartment.id}
                 className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
               >
-                <ImageCarousel
-                  images={apartment.images.map((e) => e.image)}
-                  name={apartment.name}
-                />
                 <CardHeader>
                   <CardTitle className="text-blue-600 truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">

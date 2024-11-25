@@ -1,10 +1,6 @@
 import { User } from "./user";
 
-export type ApartmentImage = {
-  id: number;
-  image: string;
-  file?: File;
-};
+
 
 export type Apartment = {
   id: number;
@@ -18,7 +14,6 @@ export type Apartment = {
   hasPool: boolean;
   rating: number;
   hasGym: boolean;
-  images: ApartmentImage[];
   floor: number;
   letter: string;
   bathrooms: number;
