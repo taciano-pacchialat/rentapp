@@ -3,6 +3,7 @@ import { User } from "./user";
 export type ApartmentImage = {
   id: number;
   image: string;
+  file: File;
 };
 
 export type Apartment = {
