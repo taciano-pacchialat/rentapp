@@ -54,12 +54,31 @@ export async function updateApartment(
 ): Promise<ApartmentResponse> {
   const token = Cookies.get("token");
   try {
-    const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, data, {
+    const formData = new FormData();
+
+    // Append non-image fields
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "images" && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Append images
+    if (data.images && data.images.length > 0) {
+      data.images.forEach((imgObj) => {
+        if (imgObj.file) {
+          formData.append("images", imgObj.file);
+        }
+      });
+    }
+
+    const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, formData, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Token ${token}`,
       },
     });
+
     return {
       success: true,
       data: response.data,

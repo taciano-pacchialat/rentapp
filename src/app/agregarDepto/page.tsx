@@ -36,7 +36,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Apartment } from "@/types/apartment";
 import { ApartmentImage } from "@/types/apartment";
-import Image from "next/image";
 
 export default function AgregarDepartamento() {
   const router = useRouter();
