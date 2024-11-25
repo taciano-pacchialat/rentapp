@@ -54,27 +54,9 @@ export async function updateApartment(
 ): Promise<ApartmentResponse> {
   const token = Cookies.get("token");
   try {
-    const formData = new FormData();
-
-    // Append non-image fields
-    Object.entries(data).forEach(([key, value]) => {
-      if (key !== "images" && value !== undefined) {
-        formData.append(key, value.toString());
-      }
-    });
-
-    // Append images
-    if (data.images && data.images.length > 0) {
-      data.images.forEach((imgObj) => {
-        if (imgObj.file) {
-          formData.append("images", imgObj.file);
-        }
-      });
-    }
-
-    const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, formData, {
+    const response = await axios.put(`${BASE_URL}/api/apartments/${apartmentId}/`, data, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         Authorization: `Token ${token}`,
       },
     });
@@ -130,27 +112,9 @@ export async function deleteApartment(apartmentId: number): Promise<ApartmentRes
 export async function addApartment(data: Partial<Apartment>): Promise<ApartmentResponse> {
   const token = Cookies.get("token");
   try {
-    const formData = new FormData();
-
-    // Append non-image fields
-    Object.entries(data).forEach(([key, value]) => {
-      if (key !== "images" && value !== undefined) {
-        formData.append(key, value.toString());
-      }
-    });
-
-    // Append images
-    if (data.images && data.images.length > 0) {
-      data.images.forEach((imgObj) => {
-        if (imgObj.file) {
-          formData.append("images", imgObj.file);
-        }
-      });
-    }
-
-    const response = await axios.post(`${BASE_URL}/api/apartments/`, formData, {
+    const response = await axios.post(`${BASE_URL}/api/apartments/`, data, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
         Authorization: `Token ${token}`,
       },
     });
