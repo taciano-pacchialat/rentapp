@@ -1,7 +1,5 @@
 import { User } from "./user";
 
-
-
 export type Apartment = {
   id: number;
   name: string;
