@@ -68,7 +68,7 @@ export default function AgregarDepartamento() {
 
     if (name === "images" && files) {
       const newImages: ApartmentImage[] = Array.from(files).map((file, index) => ({
-        id: Date.now() + index, // Unique ID
+        id: Date.now() + index, // ID único
         image: URL.createObjectURL(file),
         file: file,
       }));
@@ -189,16 +189,16 @@ export default function AgregarDepartamento() {
                 </div>
                 {selectedImages.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 gap-4">
-                    {selectedImages.map((image, index) => (
-                      <div key={index} className="relative">
-                        <Image
+                    {selectedImages.map((image) => (
+                      <div key={image.id} className="relative">
+                        <img
                           src={image.image}
-                          alt={`Previsualización de la imagen ${index + 1}`}
+                          alt={`Previsualización de la imagen`}
                           className="w-full h-64 object-cover rounded-lg"
                         />
                         <button
                           type="button"
-                          onClick={() => eliminarImagen(index)}
+                          onClick={() => eliminarImagen(image.id)}
                           className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1"
                         >
                           X
