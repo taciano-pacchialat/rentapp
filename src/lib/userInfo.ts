@@ -1,4 +1,5 @@
 import { User } from "@/types/user";
+import Cache from "@/lib/cache";
 
 class UserInfo {
   private static instance: UserInfo;
@@ -23,9 +24,16 @@ class UserInfo {
     this._user = user;
   }
 
-  public clearUser() {
+  public async clearUser(): Promise<void> {
+  if (this._user) {
+    const cacheInstance = Cache.getInstance();
+    const userApartments = await cacheInstance.getByOwner(this._user.email);
+    for (const apartment of userApartments) {
+      await cacheInstance.removeData(apartment.id);
+    }
     this._user = null;
   }
+}
 
   public assignUser(email: string, phone_number: string, name: string): void {
     this._user = { email, phone_number, name };
