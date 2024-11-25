@@ -25,7 +25,7 @@ export class Cache {
       if (apartmentsResponse.success) {
         this.data = apartmentsResponse.data as Apartment[];
         this.isLoaded = true;
-        console.log("Datos cargados desde la API.");
+        console.log("Datos cargados desde la API:", this.data);
       } else {
         console.error(apartmentsResponse.message || "Error al cargar los datos.");
       }
@@ -152,6 +152,17 @@ export class Cache {
       console.error(response.message || "Error al eliminar el apartamento.", response.errors);
       return false;
     }
+  }
+
+  /**
+   * Gets the apartments owned by the owner corresponding to the ownerEmail
+   * @param ownerEmail owner's email
+   */
+  public async getByOwner(ownerEmail: string): Promise<Apartment[]> {
+    if (!this.isLoaded) {
+      await this.initialize();
+    }
+    return this.data.filter((item) => item.owner.email == ownerEmail);
   }
 }
 

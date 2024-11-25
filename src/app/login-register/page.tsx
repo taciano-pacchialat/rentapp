@@ -26,6 +26,8 @@ import {
   validatePhone,
 } from "@/lib/utils";
 import UserInfo from "@/lib/userInfo";
+import { fetchUserByEmail } from "@/lib/db";
+import { User } from "@/types/user";
 
 export default function AuthView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,19 +66,21 @@ export default function AuthView() {
       password: loginPassword,
     };
 
-    const response = await loginUser(loginData);
+    const loginResponse = await loginUser(loginData);
 
-    if (response.success) {
-      const userInfo = UserInfo.getInstance();
-      userInfo.setUser({
-        email: registerEmail,
-        phone_number: registerPhone,
-        name: registerName,
-      });
-
-      router.push("/home");
+    if (loginResponse.success) {
+      const userResponse = await fetchUserByEmail(loginEmail);
+      if (userResponse.success && userResponse.data) {
+        const user = userResponse.data as User;
+        const userInfo = UserInfo.getInstance();
+        userInfo.setUser(user);
+        console.log("userInfo: ", userInfo.getUser());
+        router.push("/home");
+      } else {
+        setLoginError(userResponse.message || "Error al obtener datos del usuario.");
+      }
     } else {
-      setLoginError(response.message || "Error durante el inicio de sesión.");
+      setLoginError(loginResponse.message || "Error durante el inicio de sesión.");
     }
 
     setIsLoading(false);
@@ -95,25 +99,30 @@ export default function AuthView() {
       phone_number: registerPhone,
     };
 
-    const response = await registerUser(registrationData);
+    const registerResponse = await registerUser(registrationData);
 
-    if (response.success) {
-      const userInfo = UserInfo.getInstance();
-      userInfo.setUser({ email: registerEmail, phone_number: registerPhone, name: registerName });
-      router.push("/home");
+    if (registerResponse.success) {
+      const userResponse = await fetchUserByEmail(registerEmail);
+      if (userResponse.success && userResponse.data) {
+        const user = userResponse.data as User;
+        const userInfo = UserInfo.getInstance();
+        userInfo.setUser(user);
+        console.log(userInfo.getUser());
+        router.push("/home");
+      }
     } else {
       setRegisterErrors({
-        name: response.errors?.name || "",
-        email: response.errors?.email || "",
-        phone: response.errors?.phone || "",
-        password: response.errors?.password || "",
-        confirmPassword: response.errors?.confirmPassword || "",
-        dni: response.errors?.dni || "",
+        name: registerResponse.errors?.name || "",
+        email: registerResponse.errors?.email || "",
+        phone: registerResponse.errors?.phone || "",
+        password: registerResponse.errors?.password || "",
+        confirmPassword: registerResponse.errors?.confirmPassword || "",
+        dni: registerResponse.errors?.dni || "",
       });
-      if (response.message) {
+      if (registerResponse.message) {
         setRegisterErrors((prevErrors) => ({
           ...prevErrors,
-          general: response.message,
+          general: registerResponse.message,
         }));
       }
     }

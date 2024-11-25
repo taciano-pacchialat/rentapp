@@ -25,17 +25,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import NavBar from "@/components/ui/NavBar";
-// import userInf from "@/lib/userInfo";
-import cache from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
 import UserInfo from "@/lib/userInfo";
-
-const cacheInstance = cache.getInstance();
-// const userInfo = userInf.getInstance();
-
-// const param: Partial<Apartment> = {
-//   owner: userInfo.getUser()!,
-// };
+import Cache from "@/lib/cache";
 
 function ImageCarousel({ images, name }: { images: string[]; name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
@@ -132,16 +124,17 @@ export default function UserPage() {
 
   useEffect(() => {
     async function fetchApartments() {
-      const allApartments = await cacheInstance.getAll();
+      const cacheInstance = Cache.getInstance();
       const currentUser = userInfo.getUser();
       if (currentUser) {
-        const filteredData = allApartments.filter((apt) => apt.owner.email === currentUser.email);
+        const filteredData = await cacheInstance.getByOwner(currentUser.email);
         setApartments(filteredData);
       }
     }
     fetchApartments();
-  }, [userInfo]);
+  });
 
+  // TODO manejar con cookies
   const handleDeleteUser = () => {
     userInfo.clearUser();
     router.push("/login-register");

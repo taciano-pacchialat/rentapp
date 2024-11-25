@@ -26,6 +26,10 @@ class UserInfo {
   public clearUser() {
     this._user = null;
   }
+
+  public assignUser(email: string, phone_number: string, name: string): void {
+    this._user = { email, phone_number, name };
+  }
 }
 
 export default UserInfo;

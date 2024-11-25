@@ -167,3 +167,46 @@ export const getApartmentOwner = async (apartmentId: number): Promise<UserRespon
     };
   }
 };
+
+export async function fetchUserByEmail(email: string): Promise<UserResponse> {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      throw new Error("Authentication token not found.");
+    }
+
+    const response = await axios.get<User[]>(`${BASE_URL}/api/auth/users/`, {
+      params: { email },
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (response.data && response.data.length > 0) {
+      const user = response.data[0];
+      return {
+        success: true,
+        data: user,
+        message: "Usuario obtenido correctamente.",
+      };
+    } else {
+      return {
+        success: false,
+        message: `Usuario con email ${email} no encontrado.`,
+      };
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        errors: error.response.data.errors || {},
+        message: error.response.data.message || "Error al obtener el usuario.",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Ocurrió un error inesperado al obtener el usuario.",
+      };
+    }
+  }
+}

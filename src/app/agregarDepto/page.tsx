@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/text-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Cache from "@/lib/cache";
 import {
   Home,
   Bath,
@@ -23,7 +24,6 @@ import {
   MapPin,
 } from "lucide-react";
 import NavBar from "@/components/ui/NavBar";
-import cache from "@/lib/cache";
 import userInfo from "@/lib/userInfo";
 import {
   AlertDialog,
@@ -71,30 +71,12 @@ export default function AgregarDepartamento() {
 
   const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Nuevo departamento:", nuevoDepartamento);
-    const apartments = await cache.getInstance().getAll();
-    const newApartment: Apartment = {
-      id: apartments.length + 1,
-      name: nuevoDepartamento.name,
-      price: nuevoDepartamento.price,
-      expenses: nuevoDepartamento.expenses,
+    const newApartment: Partial<Apartment> = {
+      ...nuevoDepartamento,
       owner: userInfo.getInstance().getUser()!,
-      description: nuevoDepartamento.description,
-      hasParking: nuevoDepartamento.hasParking,
-      hasPets: nuevoDepartamento.hasPets,
-      hasPool: nuevoDepartamento.hasPool,
-      hasGym: nuevoDepartamento.hasGym,
-      images: nuevoDepartamento.images,
-      floor: nuevoDepartamento.floor,
-      letter: nuevoDepartamento.letter,
-      bathrooms: nuevoDepartamento.bathrooms,
-      rooms: nuevoDepartamento.rooms,
-      additionalInfo: nuevoDepartamento.additionalInfo,
-      street_address: nuevoDepartamento.street_address,
-      // rating hardcodeado
       rating: Math.floor(Math.random() * 5) + 1,
     };
-    cache.getInstance().addData(newApartment);
+    Cache.getInstance().addData(newApartment);
     setShowConfirmation(true);
   };
 

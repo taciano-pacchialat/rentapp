@@ -43,7 +43,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import cache from "@/lib/cache";
+import cache, { Cache } from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
 
 export default function EditApartmentPage() {
@@ -89,13 +89,13 @@ export default function EditApartmentPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (apartment) {
-      cache.getInstance().updateData(apartment.id, apartment);
-      console.log("Apartment updated:", apartment);
-      router.push("/userPage"); // Redirige a la página principal después de guardar
+      Cache.getInstance().updateData(apartment.id, apartment);
     }
+    console.log("Apartment updated:", apartment);
+    router.push("/userPage");
   };
 
   const handleDelete = () => {
