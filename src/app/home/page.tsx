@@ -16,77 +16,8 @@ import {
 import NavBar from "@/components/ui/NavBar";
 import DetailButton from "@/components/ui/detail-button";
 import cache from "@/lib/cache";
-import { Apartment, ApartmentImage } from "@/types/apartment";
+import { Apartment} from "@/types/apartment";
 
-function ImageCarousel({ images, name }: { images: ApartmentImage[]; name: string }) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
-
-  useEffect(() => {
-    if (currentImageIndex >= images.length) {
-      setCurrentImageIndex(0);
-    }
-  }, [images, currentImageIndex]);
-
-  const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-  };
-
-  if (images.length === 0) {
-    return (
-      <div className="relative w-full pt-[56.25%] flex items-center justify-center bg-gray-200 rounded-lg">
-        <span className="text-gray-500">No hay imágenes disponibles</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-full pt-[56.25%]">
-      <Image
-        src={images[currentImageIndex].image}
-        alt={`Imagen ${currentImageIndex + 1} de ${name}`}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      />
-      {images.length > 1 && (
-        <>
-          {currentImageIndex > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-[#0066FF] rounded-full p-1"
-              onClick={(e) => {
-                e.preventDefault();
-                prevImage();
-              }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="sr-only">Imagen anterior</span>
-            </Button>
-          )}
-          {currentImageIndex < images.length - 1 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-[#0066FF] rounded-full p-1"
-              onClick={(e) => {
-                e.preventDefault();
-                nextImage();
-              }}
-            >
-              <ChevronRight className="h-6 w-6" />
-              <span className="sr-only">Siguiente imagen</span>
-            </Button>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -150,7 +81,6 @@ export default function HomePage() {
                 key={apartment.id}
                 className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
               >
-                <ImageCarousel images={apartment.images} name={apartment.name} />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
                   <CardDescription className="truncate">

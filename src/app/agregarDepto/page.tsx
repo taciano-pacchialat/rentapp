@@ -15,7 +15,6 @@ import {
   Bath,
   DollarSign,
   Info,
-  Upload,
   Building,
   Car,
   Cat,
@@ -35,7 +34,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Apartment } from "@/types/apartment";
-import { ApartmentImage } from "@/types/apartment";
 
 export default function AgregarDepartamento() {
   const router = useRouter();
@@ -51,7 +49,6 @@ export default function AgregarDepartamento() {
     hasPool: false,
     rating: 0,
     hasGym: false,
-    images: [],
     floor: 0,
     letter: "",
     bathrooms: 0,
@@ -60,21 +57,10 @@ export default function AgregarDepartamento() {
     street_address: "",
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<ApartmentImage[]>([]);
 
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, files } = e.target as HTMLInputElement;
-
-    if (name === "images" && files) {
-      const newImages: ApartmentImage[] = Array.from(files).map((file, index) => ({
-        id: Date.now() + index, // ID único
-        image: URL.createObjectURL(file),
-        file: file,
-      }));
-      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-    } else {
-      setNuevoDepartamento((prev) => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target as HTMLInputElement;
+    setNuevoDepartamento((prev) => ({ ...prev, [name]: value }));
   };
 
   const manejarCambioCheckbox = (nombre: string) => (marcado: boolean) => {
@@ -84,17 +70,24 @@ export default function AgregarDepartamento() {
   const manejarEnvio = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const apartmentData = {
+    const user = userInfo.getInstance().getUser();
+    if (!user) {
+      console.error("Usuario no definido");
+      return;
+    }
+
+    const apartmentData: Apartment = {
       ...nuevoDepartamento,
-      images: selectedImages,
+      owner: user,
+      rating: Math.floor(Math.random() * 5) + 1,
     };
 
-    Cache.getInstance().addData(apartmentData);
-    setShowConfirmation(true);
-  };
-
-  const eliminarImagen = (id: number) => {
-    setSelectedImages((prevImages) => prevImages.filter((img) => img.id !== id));
+    const success = await Cache.getInstance().addData(apartmentData);
+    if (success) {
+      setShowConfirmation(true);
+    } else {
+      console.error("Error al agregar el nuevo departamento.");
+    }
   };
 
   const handleConfirmation = () => {
@@ -111,7 +104,6 @@ export default function AgregarDepartamento() {
       hasPool: false,
       rating: 0,
       hasGym: false,
-      images: [],
       floor: 0,
       letter: "",
       bathrooms: 0,
@@ -156,83 +148,6 @@ export default function AgregarDepartamento() {
                   placeholder="Ingrese la dirección del departamento"
                   maxLength={255}
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="images" className="flex items-center space-x-2">
-                  <Upload size={18} />
-                  <span>Imágenes del Departamento</span>
-                </Label>
-                <div className="flex items-center justify-center w-full">
-                  <label
-                    htmlFor="images"
-                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Haz clic para subir</span> o arrastra y
-                        suelta
-                      </p>
-                      <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
-                    </div>
-                    <Input
-                      id="images"
-                      name="images"
-                      type="file"
-                      className="hidden"
-                      multiple
-                      onChange={manejarCambioInput}
-                    />
-                  </label>
-                </div>
-                {selectedImages.length > 0 && (
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    {selectedImages.map((image) => (
-                      <div key={image.id} className="relative">
-                        <img
-                          src={image.image}
-                          alt={`Previsualización de la imagen`}
-                          className="w-full h-64 object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => eliminarImagen(image.id)}
-                          className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1"
-                        >
-                          X
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="floor" className="flex items-center space-x-2">
-                    <Building size={18} />
-                    <span>Piso</span>
-                  </Label>
-                  <Input
-                    id="floor"
-                    name="floor"
-                    type="number"
-                    onChange={manejarCambioInput}
-                    value={nuevoDepartamento.floor}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="letter" className="flex items-center space-x-2">
-                    <Home size={18} />
-                    <span>Letra</span>
-                  </Label>
-                  <Input
-                    id="letter"
-                    name="letter"
-                    onChange={manejarCambioInput}
-                    value={nuevoDepartamento.letter}
-                  />
-                </div>
               </div>
 
               <div className="space-y-2">
@@ -327,7 +242,7 @@ export default function AgregarDepartamento() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="tieneEstacionamiento"
-                        onCheckedChange={manejarCambioCheckbox("tieneEstacionamiento")}
+                        onCheckedChange={manejarCambioCheckbox("hasParking")}
                       />
                       <Label
                         htmlFor="tieneEstacionamiento"
@@ -347,7 +262,7 @@ export default function AgregarDepartamento() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="permiteMascotas"
-                        onCheckedChange={manejarCambioCheckbox("permiteMascotas")}
+                        onCheckedChange={manejarCambioCheckbox("hasPets")}
                       />
                       <Label
                         htmlFor="permiteMascotas"
@@ -367,7 +282,7 @@ export default function AgregarDepartamento() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="tienePiscina"
-                        onCheckedChange={manejarCambioCheckbox("tienePiscina")}
+                        onCheckedChange={manejarCambioCheckbox("hasPool")}
                       />
                       <Label
                         htmlFor="tienePiscina"
@@ -387,7 +302,7 @@ export default function AgregarDepartamento() {
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="tieneGimnasio"
-                        onCheckedChange={manejarCambioCheckbox("tieneGimnasio")}
+                        onCheckedChange={manejarCambioCheckbox("hasGym")}
                       />
                       <Label
                         htmlFor="tieneGimnasio"
@@ -413,21 +328,21 @@ export default function AgregarDepartamento() {
             </form>
           </CardContent>
         </Card>
-      </div>
 
-      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Propiedad Agregada con Éxito</AlertDialogTitle>
-            <AlertDialogDescription>
-              La propiedad ha sido agregada correctamente a su lista.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleConfirmation}>Aceptar</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Propiedad Agregada con Éxito</AlertDialogTitle>
+              <AlertDialogDescription>
+                La propiedad ha sido agregada correctamente a su lista.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={handleConfirmation}>Aceptar</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </TooltipProvider>
   );
 }

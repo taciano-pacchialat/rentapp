@@ -38,13 +38,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Phone, Mail, Send } from "lucide-react";
 
-const [isModalOpen, setIsModalOpen] = useState(false);
+
 
 export default function DetallesDepartamentoPage() {
   const { id } = useParams();
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     if (id) {
       const fetchApartment = async () => {
@@ -57,18 +57,7 @@ export default function DetallesDepartamentoPage() {
     }
   }, [id]);
 
-  const prevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      apartment ? (prevIndex === 0 ? apartment.images.length - 1 : prevIndex - 1) : prevIndex
-    );
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      apartment ? (prevIndex === apartment.images.length - 1 ? 0 : prevIndex + 1) : prevIndex
-    );
-  };
-
+ 
   if (!apartment) {
     return <div>Cargando...</div>;
   }
@@ -112,34 +101,6 @@ export default function DetallesDepartamentoPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="relative w-full h-[400px] mb-6">
-            {apartment.images &&
-            apartment.images.length > 0 &&
-            apartment.images[currentImageIndex] ? (
-              <Image
-                src={apartment.images[currentImageIndex].image}
-                alt={`${apartment.name} - Imagen ${currentImageIndex + 1}`}
-                fill
-                className="object-cover rounded-lg"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                <span className="text-gray-500">Imagen no disponible</span>
-              </div>
-            )}
-            <button
-              onClick={prevImage}
-              className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </div>
 
           <div className="flex items-center mb-2">
             <MapPin className="mr-2 text-blue-600" />
