@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/text-area";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -59,7 +59,7 @@ export default function AgregarDepartamento() {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target as HTMLInputElement;
+    const { name, value } = e.target;
     setNuevoDepartamento((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -148,6 +148,37 @@ export default function AgregarDepartamento() {
                   placeholder="Ingrese la dirección del departamento"
                   maxLength={255}
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="floor" className="flex items-center space-x-2">
+                    <Building size={18} />
+                    <span>Piso</span>
+                  </Label>
+                  <Input
+                    id="floor"
+                    name="floor"
+                    type="number"
+                    onChange={manejarCambioInput}
+                    value={nuevoDepartamento.floor}
+                    placeholder="Ingrese el piso"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="letter" className="flex items-center space-x-2">
+                    <Info size={18} />
+                    <span>Letra</span>
+                  </Label>
+                  <Input
+                    id="letter"
+                    name="letter"
+                    onChange={manejarCambioInput}
+                    value={nuevoDepartamento.letter}
+                    placeholder="Ingrese la letra"
+                    maxLength={1}
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -241,11 +272,12 @@ export default function AgregarDepartamento() {
                   <TooltipTrigger asChild>
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="tieneEstacionamiento"
+                        id="hasParking"
+                        checked={nuevoDepartamento.hasParking}
                         onCheckedChange={manejarCambioCheckbox("hasParking")}
                       />
                       <Label
-                        htmlFor="tieneEstacionamiento"
+                        htmlFor="hasParking"
                         className="flex items-center space-x-2 cursor-pointer"
                       >
                         <Car size={18} />
@@ -261,11 +293,12 @@ export default function AgregarDepartamento() {
                   <TooltipTrigger asChild>
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="permiteMascotas"
+                        id="hasPets"
+                        checked={nuevoDepartamento.hasPets}
                         onCheckedChange={manejarCambioCheckbox("hasPets")}
                       />
                       <Label
-                        htmlFor="permiteMascotas"
+                        htmlFor="hasPets"
                         className="flex items-center space-x-2 cursor-pointer"
                       >
                         <Cat size={18} />
@@ -281,11 +314,12 @@ export default function AgregarDepartamento() {
                   <TooltipTrigger asChild>
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="tienePiscina"
+                        id="hasPool"
+                        checked={nuevoDepartamento.hasPool}
                         onCheckedChange={manejarCambioCheckbox("hasPool")}
                       />
                       <Label
-                        htmlFor="tienePiscina"
+                        htmlFor="hasPool"
                         className="flex items-center space-x-2 cursor-pointer"
                       >
                         <Waves size={18} />
@@ -301,11 +335,12 @@ export default function AgregarDepartamento() {
                   <TooltipTrigger asChild>
                     <div className="flex items-center space-x-2">
                       <Checkbox
-                        id="tieneGimnasio"
+                        id="hasGym"
+                        checked={nuevoDepartamento.hasGym}
                         onCheckedChange={manejarCambioCheckbox("hasGym")}
                       />
                       <Label
-                        htmlFor="tieneGimnasio"
+                        htmlFor="hasGym"
                         className="flex items-center space-x-2 cursor-pointer"
                       >
                         <Dumbbell size={18} />
