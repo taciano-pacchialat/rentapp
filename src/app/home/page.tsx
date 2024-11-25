@@ -21,6 +21,12 @@ import { Apartment, ApartmentImage } from "@/types/apartment";
 function ImageCarousel({ images, name }: { images: ApartmentImage[]; name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
+  useEffect(() => {
+    if (currentImageIndex >= images.length) {
+      setCurrentImageIndex(0);
+    }
+  }, [images, currentImageIndex]);
+
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
@@ -29,7 +35,15 @@ function ImageCarousel({ images, name }: { images: ApartmentImage[]; name: strin
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
 
- return (
+  if (images.length === 0) {
+    return (
+      <div className="relative w-full pt-[56.25%] flex items-center justify-center bg-gray-200 rounded-lg">
+        <span className="text-gray-500">No hay imágenes disponibles</span>
+      </div>
+    );
+  }
+
+  return (
     <div className="relative w-full pt-[56.25%]">
       <Image
         src={images[currentImageIndex].image}
