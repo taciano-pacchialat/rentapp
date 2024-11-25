@@ -159,10 +159,11 @@ export class Cache {
    * @param ownerEmail owner's email
    */
   public async getByOwner(ownerEmail: string): Promise<Apartment[]> {
-    if (!this.isLoaded) {
-      await this.initialize();
-    }
-    return this.data.filter((item) => item.owner.email == ownerEmail);
+    await this.initialize();
+    console.log("All apartments: ", this.data);
+    const result = this.data.filter((item) => item.owner.email === ownerEmail);
+    console.log(`filtered apartments by the email ${ownerEmail} :`, result);
+    return result;
   }
 }
 

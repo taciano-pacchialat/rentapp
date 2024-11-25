@@ -175,15 +175,15 @@ export async function fetchUserByEmail(email: string): Promise<UserResponse> {
       throw new Error("Authentication token not found.");
     }
 
-    const response = await axios.get<User[]>(`${BASE_URL}/api/auth/users/`, {
+    const response = await axios.get<User[]>(`${BASE_URL}/api/auth/users/by-email/`, {
       params: { email },
       headers: {
         Authorization: `Token ${token}`,
       },
     });
 
-    if (response.data && response.data.length > 0) {
-      const user = response.data[0];
+    if (response.status === 200) {
+      const user = response.data;
       return {
         success: true,
         data: user,

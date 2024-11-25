@@ -132,7 +132,7 @@ export default function UserPage() {
       }
     }
     fetchApartments();
-  });
+  }, [userInfo]);
 
   // TODO manejar con cookies
   const handleDeleteUser = () => {
