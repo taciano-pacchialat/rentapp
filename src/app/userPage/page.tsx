@@ -1,28 +1,40 @@
-//Seria necesario tener alguna informacion del usuario en cada pagina para poder filtrar por nombre de usuario
-//en la parte de owner del objeto departament. 
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { PlusCircle, Edit, ChevronLeft, ChevronRight, Star } from 'lucide-react'
+import { PlusCircle, Edit, ChevronLeft, ChevronRight, Star, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import  NavBar  from "@/components/ui/NavBar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import NavBar from "@/components/ui/NavBar"
+import userInf from "@/lib/userInfo"
+import cache from "@/lib/cache"
+import { ApartmentImage } from "@/types/apartment"
 
 interface Apartment {
   id: number;
   name: string;
   price: number;
   expenses: number;
-  owner: string;
+  owner: number;
   description: string;
   hasParking: boolean;
   hasPets: boolean;
   hasPool: boolean;
   hasGym: boolean;
-  images: string[];
+  images: ApartmentImage[];
   floor: number;
   letter: string;
   bathrooms: number;
@@ -31,77 +43,13 @@ interface Apartment {
   rating: number;
 }
 
-const userApartments: Apartment[] = [
-  {
-    id: 1,
-    name: "Apartamento de lujo en el centro",
-    price: 200000,
-    expenses: 15000,
-    owner: "Juan Pérez",
-    description: "Moderno apartamento de 2 dormitorios en el corazón del centro",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: false,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 5,
-    letter: "A",
-    bathrooms: 2,
-    rooms: 2,
-    additionalInfo: "Recientemente renovado",
-    rating: 4.7,
-  },
-  {
-    id: 2,
-    name: "Acogedor estudio",
-    price: 120000,
-    expenses: 8000,
-    owner: "Juan Pérez",
-    description: "Cómodo estudio perfecto para solteros o parejas",
-    hasParking: false,
-    hasPets: false,
-    hasPool: false,
-    hasGym: true,
-    images: [
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg"
-    ],
-    floor: 2,
-    letter: "B",
-    bathrooms: 1,
-    rooms: 1,
-    additionalInfo: "Excelente ubicación",
-    rating: 3.2,
-  },
-  {
-    id: 3,
-    name: "Apartamento familiar con vista",
-    price: 250000,
-    expenses: 20000,
-    owner: "Juan Pérez",
-    description: "Espacioso apartamento de 3 dormitorios con hermosa vista a la ciudad",
-    hasParking: true,
-    hasPets: true,
-    hasPool: true,
-    hasGym: true,
-    images: [
-      "/images/cuanto_mide_departamento_ideal.jpg",
-      "/images/depto.jpg",
-      "/images/cuanto_mide_departamento_ideal.jpg"
-    ],
-    floor: 8,
-    letter: "C",
-    bathrooms: 2,
-    rooms: 3,
-    additionalInfo: "Terraza privada",
-    rating: 5,
-  },
-]
+const cacheInstance = cache.getInstance();
+const userInfo = userInf.getInstance();
+
+ 
+const param: Partial<Apartment> = {
+  owner: userInfo.getUsuario()
+}
 
 function ImageCarousel({ images, name }: { images: string[], name: string }) {
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
@@ -109,7 +57,6 @@ function ImageCarousel({ images, name }: { images: string[], name: string }) {
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
   }
-
   const prevImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
   }
@@ -185,6 +132,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function UserPage() {
   const router = useRouter()
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const handleAddProperty = () => {
     router.push('/agregarDepto')
@@ -193,11 +141,26 @@ export default function UserPage() {
   const handleEditProperty = (id: number) => {
     router.push(`/mod-Dep/${id}`)
   }
+
+  const [userApartments, setApartments] = useState<Apartment[]>([]);
+
+  useEffect(() => {
+    async function fetchApartments() {
+      const data = await cacheInstance.filterBy(param);
+      setApartments(data);
+    }
+    fetchApartments();
+  }, []);
+
+  const handleDeleteUser = () => {
+    userInfo.setUsuario(0);
+    router.push('/login-register');
+  }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
-      <main className="container mx-auto mt-8 px-4">
+      <main className="container mx-auto mt-8 px-4 pb-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Mis Propiedades</h1>
           <Button onClick={handleAddProperty} className="bg-blue-600 hover:bg-blue-700">
@@ -205,40 +168,76 @@ export default function UserPage() {
             Agregar Propiedad
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userApartments.map((apartment) => (
-            <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
-              <ImageCarousel images={apartment.images} name={apartment.name} />
-              <CardHeader>
-                <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
-                <CardDescription className="truncate">Propietario: {apartment.owner}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
-                <p className="text-sm text-gray-500 mt-2">Piso: {apartment.floor}, Letra: {apartment.letter}</p>
-                <p className="text-sm text-gray-500">Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}</p>
-                <div className="mt-2">
-                  <StarRating rating={apartment.rating} />
-                </div>
-              </CardContent>
-              <CardFooter className="mt-auto flex justify-between items-center">
-                <p className="text-lg font-bold">
-                  ${apartment.price.toLocaleString()}/mes
-                </p>
-                <p className="text-sm text-gray-500">
-                  Expensas: ${apartment.expenses.toLocaleString()}
-                </p>
-              </CardFooter>
-              <CardFooter>
-                <Button onClick={() => handleEditProperty(apartment.id)} className="w-full bg-blue-600 hover:bg-blue-700">
-                  <Edit className="mr-2 h-4 w-4" />
-                  Modificar Propiedad
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+        {userApartments.length === 0 ? (
+          <Card className="p-6 text-center">
+            <CardContent>
+              <p className="text-xl text-gray-600">No tienes ninguna propiedad</p>
+              <Button onClick={handleAddProperty} className="mt-4 bg-blue-600 hover:bg-blue-700">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Agregar tu primera propiedad
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {userApartments.map((apartment) => (
+              <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
+                <ImageCarousel images={apartment.images.map(image => image.image)} name={apartment.name} />
+                <CardHeader>
+                  <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
+                  <p className="text-sm text-gray-500 mt-2">Piso: {apartment.floor}, Letra: {apartment.letter}</p>
+                  <p className="text-sm text-gray-500">Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}</p>
+                  <div className="mt-2">
+                    <StarRating rating={apartment.rating} />
+                  </div>
+                </CardContent>
+                <CardFooter className="mt-auto flex justify-between items-center">
+                  <p className="text-lg font-bold">
+                    ${apartment.price.toLocaleString()}/mes
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Expensas: ${apartment.expenses.toLocaleString()}
+                  </p>
+                </CardFooter>
+                <CardFooter>
+                  <Button onClick={() => handleEditProperty(apartment.id)} className="w-full bg-blue-600 hover:bg-blue-700">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Modificar Propiedad
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+        <div className="mt-8 text-center">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="bg-red-600 hover:bg-red-700">
+                <Trash2 className="mr-2 h-4 w-4" />
+                Eliminar Usuario
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmar eliminación de usuario</AlertDialogTitle>
+                <AlertDialogDescription>
+                  ¿Estás seguro de que deseas eliminar tu cuenta de usuario? Esta acción no se puede deshacer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteUser} className="bg-red-600 hover:bg-red-700">
+                  Eliminar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </main>
     </div>
   )
 }
+

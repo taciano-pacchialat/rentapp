@@ -1,5 +1,5 @@
-import AuthView from "./home/page";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return <AuthView />;
+export default function HomePage() {
+  redirect("/login-register");
 }

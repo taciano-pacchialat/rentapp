@@ -1,47 +1,33 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import NavBar from "@/components/ui/NavBar"
-import DetailButton from '@/components/ui/detail-button'
-import cache from '@/lib/cache'
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import NavBar from "@/components/ui/NavBar";
+import DetailButton from "@/components/ui/detail-button";
+import cache from "@/lib/cache";
+import { Apartment } from "@/types/apartment";
 
-interface Apartment {
-  id: number;
-  name: string;
-  price: number;
-  expenses: number;
-  owner: string;
-  description: string;
-  hasParking: boolean;
-  hasPets: boolean;
-  hasPool: boolean;
-  hasGym: boolean;
-  images: string[];
-  floor: number;
-  letter: string;
-  bathrooms: number;
-  rooms: number;
-  additionalInfo: string;
-  rating: number;
-}
-
-const cacheInstance = cache.getInstance();
-
-function ImageCarousel({ images, name }: { images: string[], name: string }) {
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0)
+function ImageCarousel({ images, name }: { images: string[]; name: string }) {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
-  }
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
   const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
-  }
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  };
 
   return (
     <div className="relative w-full pt-[56.25%]">
@@ -85,7 +71,7 @@ function ImageCarousel({ images, name }: { images: string[], name: string }) {
         </>
       )}
     </div>
-  )
+  );
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -95,11 +81,11 @@ function StarRating({ rating }: { rating: number }) {
         <div key={star} className="relative">
           <Star
             className={`h-5 w-5 ${
-              star <= Math.floor(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              star <= Math.floor(rating) ? "text-yellow-400 fill-current" : "text-gray-300"
             }`}
           />
           {star > Math.floor(rating) && star <= Math.ceil(rating) && (
-            <div 
+            <div
               className="absolute top-0 left-0 overflow-hidden text-yellow-400 fill-current"
               style={{ width: `${(rating % 1) * 100}%` }}
             >
@@ -109,11 +95,12 @@ function StarRating({ rating }: { rating: number }) {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default function HomePage() {
   const [featuredApartments, setApartments] = useState<Apartment[]>([]);
+  const cacheInstance = cache.getInstance();
 
   useEffect(() => {
     async function fetchApartments() {
@@ -121,7 +108,7 @@ export default function HomePage() {
       setApartments(data);
     }
     fetchApartments();
-  }, []);
+  }, [cacheInstance]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -132,7 +119,9 @@ export default function HomePage() {
         </h1>
         <section className="max-w-2xl mx-auto mb-12 text-center">
           <h2 className="text-2xl font-semibold mb-4">¿Buscas un apartamento?</h2>
-          <p className="text-gray-600 mb-6">Explora nuestra amplia selección de propiedades y encuentra el hogar perfecto para ti.</p>
+          <p className="text-gray-600 mb-6">
+            Explora nuestra amplia selección de propiedades y encuentra el hogar perfecto para ti.
+          </p>
           <Link href="/search">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full text-lg">
               Iniciar búsqueda
@@ -143,24 +132,34 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold mb-4">Departamentos destacados</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredApartments.map((apartment) => (
-              <Card key={apartment.id} className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0">
-                <ImageCarousel images={apartment.images} name={apartment.name} />
+              <Card
+                key={apartment.id}
+                className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow p-0"
+              >
+                <ImageCarousel
+                  images={apartment.images.map((e) => e.image)}
+                  name={apartment.name}
+                />
                 <CardHeader>
                   <CardTitle className="text-[#0066FF] truncate">{apartment.name}</CardTitle>
-                  <CardDescription className="truncate">Propietario: {apartment.owner}</CardDescription>
+                  <CardDescription className="truncate">
+                    Propietario: {apartment.owner}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="text-sm text-gray-600 line-clamp-3">{apartment.description}</p>
-                  <p className="text-sm text-gray-500 mt-2">Piso: {apartment.floor}, Letra: {apartment.letter}</p>
-                  <p className="text-sm text-gray-500">Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}</p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Piso: {apartment.floor}, Letra: {apartment.letter}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Baños: {apartment.bathrooms}, Habitaciones: {apartment.rooms}
+                  </p>
                   <div className="mt-2">
                     <StarRating rating={apartment.rating} />
                   </div>
                 </CardContent>
                 <CardFooter className="mt-auto flex justify-between items-center">
-                  <p className="text-lg font-bold">
-                    ${apartment.price.toLocaleString()}/mes
-                  </p>
+                  <p className="text-lg font-bold">${apartment.price.toLocaleString()}/mes</p>
                   <p className="text-sm text-gray-500">
                     Expensas: ${apartment.expenses.toLocaleString()}
                   </p>
@@ -174,5 +173,5 @@ export default function HomePage() {
         </section>
       </main>
     </div>
-  )
+  );
 }
