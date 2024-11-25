@@ -35,6 +35,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Apartment } from "@/types/apartment";
+import { ApartmentImage } from "@/types/apartment";
 
 export default function AgregarDepartamento() {
   const router = useRouter();
@@ -59,25 +60,57 @@ export default function AgregarDepartamento() {
     street_address: "",
   });
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const manejarCambioInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const { name, value, files } = e.target as HTMLInputElement;
+  if (name === "images" && files) {
+    setSelectedImages((prevImages) => [...prevImages, ...Array.from(files)]);
+  } else {
     setNuevoDepartamento((prev) => ({ ...prev, [name]: value }));
-  };
+  }
+};
 
   const manejarCambioCheckbox = (nombre: string) => (marcado: boolean) => {
     setNuevoDepartamento((prev) => ({ ...prev, [nombre]: marcado }));
   };
 
   const manejarEnvio = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const newApartment: Partial<Apartment> = {
-      ...nuevoDepartamento,
-      owner: userInfo.getInstance().getUser()!,
-      rating: Math.floor(Math.random() * 5) + 1,
-    };
-    Cache.getInstance().addData(newApartment);
-    setShowConfirmation(true);
+  e.preventDefault();
+
+  // Convertir las imágenes seleccionadas a URLs base64 y asignar IDs
+  const imagePromises = selectedImages.map((image, index) => {
+    return new Promise<ApartmentImage>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = () => {
+        resolve({
+          id: index + 1, // Asignar un ID único a cada imagen
+          image: reader.result as string,
+        });
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  });
+
+  const apartmentImages = await Promise.all(imagePromises);
+
+  // Crear un nuevo apartamento usando el tipo Apartment
+  const newApartment: Apartment = {
+    ...nuevoDepartamento,
+    images: apartmentImages,
+    owner: userInfo.getInstance().getUser()!,
+    rating: Math.floor(Math.random() * 5) + 1,
+   
+  };
+
+  // Agregar el nuevo apartamento a la cache
+  Cache.getInstance().addData(newApartment);
+  setShowConfirmation(true);
+};
+
+  const eliminarImagen = (index: number) => {
+  setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleConfirmation = () => {
@@ -142,33 +175,53 @@ export default function AgregarDepartamento() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image" className="flex items-center space-x-2">
-                  <Upload size={18} />
-                  <span>Imagen del Departamento</span>
-                </Label>
-                <div className="flex items-center justify-center w-full">
-                  <label
-                    htmlFor="image"
-                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-10 h-10 mb-3 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Haz clic para subir</span> o arrastra y
-                        suelta
-                      </p>
-                      <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
-                    </div>
-                    <Input
-                      id="image"
-                      name="image"
-                      type="file"
-                      className="hidden"
-                      onChange={manejarCambioInput}
-                    />
-                  </label>
-                </div>
-              </div>
+  <Label htmlFor="images" className="flex items-center space-x-2">
+    <Upload size={18} />
+    <span>Imágenes del Departamento</span>
+  </Label>
+  <div className="flex items-center justify-center w-full">
+    <label
+      htmlFor="images"
+      className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+    >
+      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+        <Upload className="w-10 h-10 mb-3 text-gray-400" />
+        <p className="mb-2 text-sm text-gray-500">
+          <span className="font-semibold">Haz clic para subir</span> o arrastra y suelta
+        </p>
+        <p className="text-xs text-gray-500">PNG, JPG o GIF (MAX. 800x400px)</p>
+      </div>
+      <Input
+        id="images"
+        name="images"
+        type="file"
+        className="hidden"
+        multiple
+        onChange={manejarCambioInput}
+      />
+    </label>
+  </div>
+  {selectedImages.length > 0 && (
+    <div className="mt-4 grid grid-cols-2 gap-4">
+      {selectedImages.map((image, index) => (
+        <div key={index} className="relative">
+          <img
+            src={URL.createObjectURL(image)}
+            alt={`Previsualización de la imagen ${index + 1}`}
+            className="w-full h-64 object-cover rounded-lg"
+          />
+          <button
+            type="button"
+            onClick={() => eliminarImagen(index)}
+            className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1"
+          >
+            X
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="floor" className="flex items-center space-x-2">
