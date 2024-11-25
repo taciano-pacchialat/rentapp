@@ -25,6 +25,20 @@ import {
 import { Button } from "@/components/ui/button";
 import cache from "@/lib/cache";
 import { Apartment } from "@/types/apartment";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Phone, Mail, Send } from "lucide-react";
+
+const [isModalOpen, setIsModalOpen] = useState(false);
 
 export default function DetallesDepartamentoPage() {
   const { id } = useParams();
@@ -208,11 +222,39 @@ export default function DetallesDepartamentoPage() {
               </div>
             </div>
           )}
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setIsModalOpen(true)}>
             Solicitar Alquiler
           </Button>
         </CardContent>
       </Card>
+
+      <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Contactar al Propietario</AlertDialogTitle>
+    </AlertDialogHeader>
+    <AlertDialogDescription>
+      <div className="space-y-4">
+        <div className="flex items-center">
+          <Phone className="mr-2" />
+          {apartment.owner.phone_number}
+        </div>
+        <div className="flex items-center">
+          <Mail className="mr-2" />
+          {apartment.owner.email}
+        </div>
+      </div>
+    </AlertDialogDescription>
+    <AlertDialogFooter>
+      <AlertDialogCancel onClick={() => setIsModalOpen(false)}>
+        Cerrar
+      </AlertDialogCancel>
+      
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
     </>
+
+
   );
 }
