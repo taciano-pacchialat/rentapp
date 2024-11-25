@@ -111,29 +111,40 @@ export async function deleteApartment(apartmentId: number): Promise<ApartmentRes
 export async function addApartment(data: Partial<Apartment>): Promise<ApartmentResponse> {
   const token = Cookies.get("token");
   try {
-    const response = await axios.post(`${BASE_URL}/api/apartments/`, data, {
+    const formData = new FormData();
+
+    // Append non-image fields
+    Object.entries(data).forEach(([key, value]) => {
+      if (key !== "images" && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    // Append images
+    if (data.images && data.images.length > 0) {
+      data.images.forEach((imgObj) => {
+        if (imgObj.file) {
+          formData.append("images", imgObj.file);
+        }
+      });
+    }
+
+    const response = await axios.post(`${BASE_URL}/api/apartments/`, formData, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Token ${token}`,
       },
     });
+
     return {
       success: true,
       data: response.data,
     };
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      return {
-        success: false,
-        errors: error.response.data.errors || {},
-        message: error.response.data.message || "Error al agregar el departamento.",
-      };
-    } else {
-      return {
-        success: false,
-        message: "Ocurrió un error inesperado al agregar.",
-      };
-    }
+    return {
+      success: false,
+      errors: { error: error instanceof Error ? error.message : String(error) },
+    };
   }
 }
 
